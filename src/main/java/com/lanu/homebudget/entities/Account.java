@@ -26,7 +26,7 @@ public class Account {
     @JsonIgnore
     private List<Transaction> transactionList;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;

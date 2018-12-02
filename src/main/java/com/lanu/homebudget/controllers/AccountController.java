@@ -1,11 +1,9 @@
 package com.lanu.homebudget.controllers;
 
 import com.lanu.homebudget.entities.Account;
-import com.lanu.homebudget.entities.Transaction;
-import com.lanu.homebudget.exceptions.ResourceNotFoundException;
-import com.lanu.homebudget.repositories.AccountRepository;
-import com.lanu.homebudget.security.UserService;
+import com.lanu.homebudget.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -15,27 +13,32 @@ import java.util.List;
 public class AccountController {
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
     @GetMapping("/users/{userId}/accounts")
     public List<Account> getAllAccounts(@PathVariable(value = "userId") Long userId){
-        return accountRepository.findAllByUser(userService.findByUserId(userId).get());
+        return accountService.findAccountsByUserId(userId);
     }
 
-    @GetMapping("/accounts/{accountId}/transactions")
-    public List<Transaction> getAllTransactionsByAccount(@PathVariable(value = "accountId") Long accountId){
-        return accountRepository.findById(accountId).get().getTransactionList();
+    @GetMapping("/accounts/{accountId}")
+    public Account getAccountById(@PathVariable(value = "accountId") Long accountId){
+        return accountService.findAccountById(accountId);
     }
 
     @PostMapping("/users/{userId}/accounts")
     public Account createAccount(@PathVariable(value = "userId") Long userId,
                                  @Valid @RequestBody Account account){
-        return userService.findByUserId(userId).map(user -> {
-            account.setUser(user);
-            return accountRepository.save(account);
-        }).orElseThrow(() -> new ResourceNotFoundException("UserId " + userId + " not found"));
+        return accountService.createAccount(userId, account);
+    }
+
+    @PutMapping("/accounts/{accountId}")
+    public Account updateAccount(@PathVariable (value = "accountId") Long accountId,
+                               @Valid @RequestBody Account accountRequest) {
+        return accountService.updateAccount(accountId, accountRequest);
+    }
+
+    @DeleteMapping("/accounts/{accountId}")
+    public ResponseEntity<?> deleteAccount(@PathVariable (value = "accountId") Long accountId) {
+        return accountService.deleteAccount(accountId);
     }
 }
