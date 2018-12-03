@@ -1,4 +1,3 @@
-/*
 package com.lanu.homebudget.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +14,11 @@ import java.util.stream.Collectors;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username).map(user -> new User(
+        return userService.findByUsername(username).map(user -> new User(
                 user.getUsername(),
                 user.getPassword(),
                 user.isActive(),
@@ -35,4 +34,3 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("No user with "
                         + "the name " + username + "was found."));}
 }
-*/
