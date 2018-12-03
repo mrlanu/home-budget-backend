@@ -6,7 +6,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Entity
 @Data
@@ -21,10 +20,6 @@ public class Account {
     private String currency;
     private BigDecimal balance;
     private boolean includeInTotal;
-
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Transaction> transactionList;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
