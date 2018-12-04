@@ -30,8 +30,7 @@ public class Transaction {
     private String description;
     private double amount;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
+    @OneToOne
     private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
