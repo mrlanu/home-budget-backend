@@ -21,7 +21,7 @@ public class User{
     private String username;
     private String password;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade= CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
 
     private boolean active;
