@@ -31,6 +31,12 @@ public class Transaction {
     private double amount;
 
     @OneToOne
+    private Category category;
+
+    @OneToOne
+    private SubCategory subCategory;
+
+    @OneToOne
     private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
