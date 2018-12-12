@@ -1,6 +1,5 @@
 package com.lanu.homebudget.security;
 
-import com.lanu.homebudget.entities.Account;
 import lombok.*;
 
 import javax.persistence.*;
@@ -25,7 +24,4 @@ public class User{
     private List<Role> roles;
 
     private boolean active;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Account> accountList;
 }
