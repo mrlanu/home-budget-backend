@@ -1,9 +1,10 @@
-package com.lanu.homebudget.services;
+package com.lanu.homebudget.services.implementations;
 
 import com.lanu.homebudget.entities.Account;
 import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.repositories.AccountRepository;
 import com.lanu.homebudget.security.User;
+import com.lanu.homebudget.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

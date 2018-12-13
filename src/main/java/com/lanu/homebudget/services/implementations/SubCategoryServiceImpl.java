@@ -1,8 +1,10 @@
-package com.lanu.homebudget.services;
+package com.lanu.homebudget.services.implementations;
 
 import com.lanu.homebudget.entities.SubCategory;
 import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.repositories.SubCategoryRepository;
+import com.lanu.homebudget.services.CategoryService;
+import com.lanu.homebudget.services.SubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

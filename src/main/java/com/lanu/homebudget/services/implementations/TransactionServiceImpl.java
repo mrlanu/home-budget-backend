@@ -1,8 +1,9 @@
-package com.lanu.homebudget.services;
+package com.lanu.homebudget.services.implementations;
 
 import com.lanu.homebudget.entities.Transaction;
 import com.lanu.homebudget.repositories.TransactionRepository;
 import com.lanu.homebudget.security.User;
+import com.lanu.homebudget.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
