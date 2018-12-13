@@ -4,6 +4,7 @@ import com.lanu.homebudget.entities.Transaction;
 import com.lanu.homebudget.security.User;
 import com.lanu.homebudget.security.UserService;
 import com.lanu.homebudget.services.SummaryService;
+import com.lanu.homebudget.views.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,8 +25,8 @@ public class SummaryController {
     private SummaryService summaryService;
 
     @GetMapping("/expenses")
-    public Map<String, List<Transaction>> getExpensesSummary(Principal principal){
+    public List<Group> getExpensesSummary(Principal principal){
         User user = userService.findByUsername(principal.getName()).get();
-        return summaryService.getSummaryForTransactionsType(user, Transaction.TransactionType.EXPENSE);
+        return summaryService.getAllExpenseGroups(user, Transaction.TransactionType.EXPENSE);
     }
 }
