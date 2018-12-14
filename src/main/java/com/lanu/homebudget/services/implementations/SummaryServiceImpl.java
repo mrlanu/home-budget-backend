@@ -1,11 +1,14 @@
 package com.lanu.homebudget.services.implementations;
 
 import com.lanu.homebudget.entities.Category;
+import com.lanu.homebudget.entities.SubCategory;
 import com.lanu.homebudget.entities.Transaction;
 import com.lanu.homebudget.repositories.TransactionRepository;
 import com.lanu.homebudget.security.User;
 import com.lanu.homebudget.services.SummaryService;
 import com.lanu.homebudget.views.Group;
+import com.lanu.homebudget.views.GroupSubcategory;
+import com.lanu.homebudget.views.TransactionView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,18 +38,41 @@ public class SummaryServiceImpl implements SummaryService {
         List<Transaction> transactionList = transactionRepository
                 .findAllByUserAndDateBetweenAndType(user, localDateStart, localDateEnd, type);
 
-        Map<Category, List<Transaction>> groupedByCategory = transactionList
+        Map<Category, Map<SubCategory, List<Transaction>>> groupedByCategory = transactionList
                 .stream()
-                .collect(Collectors.groupingBy(Transaction::getCategory));
+                .collect(Collectors.groupingBy(Transaction::getCategory, Collectors.groupingBy(Transaction::getSubCategory)));
 
         groupedByCategory.forEach((key,value) -> result.add(new Group(
                 key.getId(),
                 key.getName(),
-                value
+                getListOfGroupSubcategories(value),
+                getListOfGroupSubcategories(value)
                         .stream()
-                        .mapToDouble(Transaction::getAmount)
-                        .sum(),
-                value)));
+                        .mapToDouble(GroupSubcategory::getSpent)
+                        .sum()
+                )));
+        return result;
+    }
+
+    private List<GroupSubcategory> getListOfGroupSubcategories (Map<SubCategory, List<Transaction>> map) {
+        List<GroupSubcategory> result = new ArrayList<>();
+        map.forEach((k,v) -> result.add(new GroupSubcategory(
+            k.getId(),
+                    k.getName(),
+                    v.stream()
+                            .mapToDouble(Transaction::getAmount)
+                            .sum(),
+                    v.stream()
+                            .map(transaction -> new TransactionView(
+                            transaction.getId(),
+                            transaction.getDate(),
+                            transaction.getDescription(),
+                            transaction.getAmount(),
+                            transaction.getCategory().getName(),
+                            transaction.getSubCategory().getName(),
+                            transaction.getAccount().getName()))
+                            .collect(Collectors.toList()))
+        ));
         return result;
     }
 }
