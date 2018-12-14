@@ -3,10 +3,9 @@ package com.lanu.homebudget.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lanu.homebudget.security.User;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -16,9 +15,9 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @CreatedDate
-    private Date date;
+    /*@Temporal(TemporalType.TIMESTAMP)
+    @CreatedDate*/
+    private LocalDate date;
 
     @Enumerated(EnumType.STRING)
     private TransactionType type;

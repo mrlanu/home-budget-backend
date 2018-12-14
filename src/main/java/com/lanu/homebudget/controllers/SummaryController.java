@@ -8,11 +8,12 @@ import com.lanu.homebudget.views.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/summaries")
@@ -24,9 +25,11 @@ public class SummaryController {
     @Autowired
     private SummaryService summaryService;
 
-    @GetMapping("/expenses")
-    public List<Group> getExpensesSummary(Principal principal){
+    @GetMapping
+    public List<Group> getSummaryByCategories(Principal principal,
+                                              @RequestParam(name = "date") Date date,
+                                              @RequestParam(name = "type") Transaction.TransactionType type){
         User user = userService.findByUsername(principal.getName()).get();
-        return summaryService.getAllExpenseGroups(user, Transaction.TransactionType.EXPENSE);
+        return summaryService.getSummaryByCategory(user, date, type);
     }
 }

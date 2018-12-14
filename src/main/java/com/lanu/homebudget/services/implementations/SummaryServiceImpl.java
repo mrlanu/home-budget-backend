@@ -9,7 +9,10 @@ import com.lanu.homebudget.views.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,10 +24,16 @@ public class SummaryServiceImpl implements SummaryService {
    private TransactionRepository transactionRepository;
 
     @Override
-    public List<Group> getAllExpenseGroups(User user, Transaction.TransactionType type) {
+    public List<Group> getSummaryByCategory(User user, Date date, Transaction.TransactionType type) {
+
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDateStart = localDate.withDayOfMonth(1);
+        LocalDate localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
+
         List<Group> result = new ArrayList<>();
 
-        List<Transaction> transactionList = transactionRepository.findAllByUserAndType(user, type);
+        List<Transaction> transactionList = transactionRepository
+                .findAllByUserAndDateBetweenAndType(user, localDateStart, localDateEnd, type);
 
         Map<Category, List<Transaction>> groupedByCategory = transactionList
                 .stream()
