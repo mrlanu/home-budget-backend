@@ -1,12 +1,15 @@
 package com.lanu.homebudget.services.implementations;
 
+import com.lanu.homebudget.entities.Account;
 import com.lanu.homebudget.entities.Category;
 import com.lanu.homebudget.entities.SubCategory;
 import com.lanu.homebudget.entities.Transaction;
 import com.lanu.homebudget.repositories.TransactionRepository;
 import com.lanu.homebudget.security.User;
+import com.lanu.homebudget.services.AccountService;
 import com.lanu.homebudget.services.SummaryService;
 import com.lanu.homebudget.views.Group;
+import com.lanu.homebudget.views.GroupAccount;
 import com.lanu.homebudget.views.GroupSubcategory;
 import com.lanu.homebudget.views.TransactionView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,9 @@ public class SummaryServiceImpl implements SummaryService {
 
    @Autowired
    private TransactionRepository transactionRepository;
+
+   @Autowired
+   private AccountService accountService;
 
     @Override
     public List<Group> getSummaryByCategory(User user, Date date, Transaction.TransactionType type) {
@@ -73,6 +79,23 @@ public class SummaryServiceImpl implements SummaryService {
                             transaction.getAccount().getName()))
                             .collect(Collectors.toList()))
         ));
+        return result;
+    }
+
+    public List<GroupAccount> getSummaryOfAccounts(User user) {
+        List<Account> accountList = accountService.findAccountsByUser(user);
+        List<GroupAccount> result = new ArrayList<>();
+
+        Map<String, List<Account>> groupedByType = accountList.stream()
+                .collect(Collectors.groupingBy(Account::getType));
+
+        groupedByType.forEach((key, value) -> result.add(
+            new GroupAccount(
+                    key,
+                    value,
+                    value.stream().mapToDouble(Account::getBalance).sum()
+            )));
+
         return result;
     }
 }

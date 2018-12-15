@@ -31,9 +31,9 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setUser(user);
         Account account = accountService.findAccountById(transaction.getAccount().getId());
         if (transaction.getType() == Transaction.TransactionType.EXPENSE){
-            account.setBalance(account.getBalance().subtract(new BigDecimal(transaction.getAmount())));
+            account.setBalance(account.getBalance() - transaction.getAmount());
         }else if (transaction.getType() == Transaction.TransactionType.INCOME){
-            account.setBalance(account.getBalance().add(new BigDecimal(transaction.getAmount())));
+            account.setBalance(account.getBalance() + transaction.getAmount());
         }
         accountService.saveAccount(account);
         return transactionRepository.save(transaction);

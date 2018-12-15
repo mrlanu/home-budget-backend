@@ -18,7 +18,7 @@ public class Account {
     private String name;
     private String type;
     private String currency;
-    private BigDecimal balance;
+    private double balance;
     private boolean includeInTotal;
 
     @ManyToOne(fetch = FetchType.LAZY)
