@@ -12,4 +12,5 @@ public interface AccountService {
     Account findAccountById(Long accountId);
     Account updateAccount(Long accountId, Account account);
     ResponseEntity<?> deleteAccount(Long accountId);
+    Account saveAccount(Account account);
 }

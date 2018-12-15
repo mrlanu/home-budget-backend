@@ -18,6 +18,11 @@ public class AccountServiceImpl implements AccountService {
     private AccountRepository accountRepository;
 
     @Override
+    public Account saveAccount(Account account) {
+        return accountRepository.save(account);
+    }
+
+    @Override
     public Account createAccount(User user, Account account) {
         account.setUser(user);
         return accountRepository.save(account);
