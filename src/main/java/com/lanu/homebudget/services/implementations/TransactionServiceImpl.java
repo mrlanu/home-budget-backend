@@ -6,11 +6,16 @@ import com.lanu.homebudget.repositories.TransactionRepository;
 import com.lanu.homebudget.security.User;
 import com.lanu.homebudget.services.AccountService;
 import com.lanu.homebudget.services.TransactionService;
+import com.lanu.homebudget.views.TransactionView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -24,6 +29,27 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<Transaction> findAllByUser(User user) {
         return transactionRepository.findAllByUser(user);
+    }
+
+    @Override
+    public List<TransactionView> findAllByUserAndDateBetween(User user, Date date) {
+
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDateStart = localDate.withDayOfMonth(1);
+        LocalDate localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
+
+        return transactionRepository.findAllByUserAndDateBetween(user, localDateStart, localDateEnd)
+                .stream()
+                .map(transaction -> new TransactionView(
+                        transaction.getId(),
+                        transaction.getDate(),
+                        transaction.getDescription(),
+                        transaction.getAmount(),
+                        transaction.getCategory().getName(),
+                        transaction.getSubCategory().getName(),
+                        transaction.getAccount().getName(),
+                        transaction.getAccount().getType()))
+                .collect(Collectors.toList());
     }
 
     @Override

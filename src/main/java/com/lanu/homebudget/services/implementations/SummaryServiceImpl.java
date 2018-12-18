@@ -70,13 +70,14 @@ public class SummaryServiceImpl implements SummaryService {
                             .sum(),
                     v.stream()
                             .map(transaction -> new TransactionView(
-                            transaction.getId(),
-                            transaction.getDate(),
-                            transaction.getDescription(),
-                            transaction.getAmount(),
-                            transaction.getCategory().getName(),
-                            transaction.getSubCategory().getName(),
-                            transaction.getAccount().getName()))
+                                    transaction.getId(),
+                                    transaction.getDate(),
+                                    transaction.getDescription(),
+                                    transaction.getAmount(),
+                                    transaction.getCategory().getName(),
+                                    transaction.getSubCategory().getName(),
+                                    transaction.getAccount().getName(),
+                                    transaction.getAccount().getType()))
                             .collect(Collectors.toList()))
         ));
         return result;
