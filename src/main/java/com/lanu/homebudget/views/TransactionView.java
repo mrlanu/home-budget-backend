@@ -11,6 +11,7 @@ public class TransactionView {
 
     private Long id;
     private LocalDate date;
+    private String type;
     private String description;
     private double amount;
     private String category;

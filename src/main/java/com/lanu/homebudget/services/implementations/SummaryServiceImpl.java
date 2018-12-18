@@ -72,6 +72,7 @@ public class SummaryServiceImpl implements SummaryService {
                             .map(transaction -> new TransactionView(
                                     transaction.getId(),
                                     transaction.getDate(),
+                                    transaction.getType().toString(),
                                     transaction.getDescription(),
                                     transaction.getAmount(),
                                     transaction.getCategory().getName(),
