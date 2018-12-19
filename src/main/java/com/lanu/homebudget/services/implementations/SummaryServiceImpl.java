@@ -99,8 +99,9 @@ public class SummaryServiceImpl implements SummaryService {
     }
 
     @Override
-    public Brief getBrief(User user, Date date) {
+    public Brief getBrief(User user) {
 
+        Date date = new Date();
         double totalSpent;
         double totalIncome;
         double accountsTotal;

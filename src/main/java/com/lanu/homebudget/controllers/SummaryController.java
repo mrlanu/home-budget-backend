@@ -42,8 +42,8 @@ public class SummaryController {
     }
 
     @GetMapping("/brief")
-    public Brief getBrief(Principal principal, @RequestParam(name = "date") Date date){
+    public Brief getBrief(Principal principal){
         User user = userService.findByUsername(principal.getName()).get();
-        return summaryService.getBrief(user, date);
+        return summaryService.getBrief(user);
     }
 }
