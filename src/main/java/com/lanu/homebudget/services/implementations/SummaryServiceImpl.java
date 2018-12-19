@@ -8,10 +8,7 @@ import com.lanu.homebudget.repositories.TransactionRepository;
 import com.lanu.homebudget.security.User;
 import com.lanu.homebudget.services.AccountService;
 import com.lanu.homebudget.services.SummaryService;
-import com.lanu.homebudget.views.Group;
-import com.lanu.homebudget.views.GroupAccount;
-import com.lanu.homebudget.views.GroupSubcategory;
-import com.lanu.homebudget.views.TransactionView;
+import com.lanu.homebudget.views.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -99,5 +96,39 @@ public class SummaryServiceImpl implements SummaryService {
             )));
 
         return result;
+    }
+
+    @Override
+    public Brief getBrief(User user, Date date) {
+
+        double totalSpent;
+        double totalIncome;
+        double accountsTotal;
+
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localDateStart = localDate.withDayOfMonth(1);
+        LocalDate localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
+
+        List<Transaction> transactionList = transactionRepository
+                .findAllByUserAndDateBetween(user, localDateStart, localDateEnd);
+
+        totalSpent = transactionList.stream()
+                .filter(transaction ->
+                        transaction.getType() == Transaction.TransactionType.EXPENSE)
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        totalIncome = transactionList.stream()
+                .filter(transaction -> transaction.getType() == Transaction.TransactionType.INCOME)
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        accountsTotal = accountService.findAccountsByUser(user)
+                .stream()
+                .filter(account -> account.isIncludeInTotal())
+                .mapToDouble(Account::getBalance)
+                .sum();
+
+        return new Brief(accountsTotal, totalSpent, totalIncome);
     }
 }
