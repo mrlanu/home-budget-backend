@@ -16,6 +16,9 @@ public class Category {
 
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    private Transaction.TransactionType type;
+
     /*@OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
     @JsonIgnore
