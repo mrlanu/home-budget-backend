@@ -102,8 +102,6 @@ public class SummaryServiceImpl implements SummaryService {
     public Brief getBrief(User user) {
 
         Date date = new Date();
-        double totalSpent;
-        double totalIncome;
         double accountsTotal;
 
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -113,16 +111,11 @@ public class SummaryServiceImpl implements SummaryService {
         List<Transaction> transactionList = transactionRepository
                 .findAllByUserAndDateBetween(user, localDateStart, localDateEnd);
 
-        totalSpent = transactionList.stream()
-                .filter(transaction ->
-                        transaction.getType() == Transaction.TransactionType.EXPENSE)
-                .mapToDouble(Transaction::getAmount)
-                .sum();
-
-        totalIncome = transactionList.stream()
-                .filter(transaction -> transaction.getType() == Transaction.TransactionType.INCOME)
-                .mapToDouble(Transaction::getAmount)
-                .sum();
+        Map<Transaction.TransactionType, Double> transactionTypeDoubleMap =
+                transactionList
+                .stream()
+                .collect(Collectors.groupingBy(
+                        Transaction::getType, Collectors.summingDouble(Transaction::getAmount)));
 
         accountsTotal = accountService.findAccountsByUser(user)
                 .stream()
@@ -130,6 +123,8 @@ public class SummaryServiceImpl implements SummaryService {
                 .mapToDouble(Account::getBalance)
                 .sum();
 
-        return new Brief(accountsTotal, totalSpent, totalIncome);
+        return new Brief(accountsTotal,
+                transactionTypeDoubleMap.get(Transaction.TransactionType.EXPENSE),
+                transactionTypeDoubleMap.get(Transaction.TransactionType.INCOME));
     }
 }
