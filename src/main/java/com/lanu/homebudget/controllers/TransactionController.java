@@ -6,6 +6,7 @@ import com.lanu.homebudget.security.UserService;
 import com.lanu.homebudget.services.TransactionService;
 import com.lanu.homebudget.views.TransactionView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,8 +24,7 @@ public class TransactionController {
     private UserService userService;
 
     @GetMapping("/transactions")
-    public List<TransactionView> getAllTransactions(Principal principal,
-                                                    @RequestParam(name = "date") Date date){
+    public List<TransactionView> getAllTransactions(Principal principal, @RequestParam(name = "date") Date date){
         User user = userService.findByUsername(principal.getName()).get();
         return transactionService.findAllByUserAndDateBetween(user, date);
     }
@@ -34,5 +34,10 @@ public class TransactionController {
                                          @Valid @RequestBody Transaction transaction){
         User user = userService.findByUsername(principal.getName()).get();
         return transactionService.createTransaction(user, transaction);
+    }
+
+    @DeleteMapping("/transactions")
+    public ResponseEntity<?> deleteTransaction(@RequestParam(name = "transactionId") Long transactionId) {
+        return transactionService.deleteTransaction(transactionId);
     }
 }

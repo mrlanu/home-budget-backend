@@ -124,7 +124,7 @@ public class SummaryServiceImpl implements SummaryService {
                 .sum();
 
         return new Brief(accountsTotal,
-                transactionTypeDoubleMap.get(Transaction.TransactionType.EXPENSE),
-                transactionTypeDoubleMap.get(Transaction.TransactionType.INCOME));
+                transactionTypeDoubleMap.getOrDefault(Transaction.TransactionType.EXPENSE, 0.0),
+                transactionTypeDoubleMap.getOrDefault(Transaction.TransactionType.INCOME, 0.0));
     }
 }
