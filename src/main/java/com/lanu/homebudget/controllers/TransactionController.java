@@ -29,6 +29,11 @@ public class TransactionController {
         return transactionService.findAllByUserAndDateBetween(user, date);
     }
 
+    @GetMapping("/transactions/{transactionId}")
+    public Transaction getTransaction(@PathVariable(name = "transactionId")Long transactionId){
+        return transactionService.getTransactionById(transactionId);
+    }
+
     @PostMapping("/transactions")
     public Transaction createTransaction(Principal principal,
                                          @Valid @RequestBody Transaction transaction){

@@ -16,7 +16,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -74,5 +73,11 @@ public class TransactionServiceImpl implements TransactionService {
 
         accountService.saveAccount(account);
         return transactionRepository.save(transaction);
+    }
+
+    @Override
+    public Transaction getTransactionById(Long transactionId) {
+        return transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new ResourceNotFoundException("TransactionId " + transactionId + " not found"));
     }
 }

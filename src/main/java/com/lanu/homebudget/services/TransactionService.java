@@ -12,5 +12,6 @@ public interface TransactionService {
 
     List<TransactionView> findAllByUserAndDateBetween(User user, Date date);
     Transaction createTransaction(User user, Transaction transaction);
+    Transaction getTransactionById(Long id);
     ResponseEntity<?> deleteTransaction(Long transactionId);
 }
