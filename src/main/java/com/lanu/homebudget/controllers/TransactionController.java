@@ -41,6 +41,11 @@ public class TransactionController {
         return transactionService.createTransaction(user, transaction);
     }
 
+    @PutMapping("/transactions")
+    public Transaction updateComment(@Valid @RequestBody Transaction transaction) {
+        return transactionService.editTransaction(transaction);
+    }
+
     @DeleteMapping("/transactions")
     public ResponseEntity<?> deleteTransaction(@RequestParam(name = "transactionId") Long transactionId) {
         return transactionService.deleteTransaction(transactionId);

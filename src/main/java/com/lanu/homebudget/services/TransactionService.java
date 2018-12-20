@@ -14,4 +14,5 @@ public interface TransactionService {
     Transaction createTransaction(User user, Transaction transaction);
     Transaction getTransactionById(Long id);
     ResponseEntity<?> deleteTransaction(Long transactionId);
+    Transaction editTransaction(Transaction transactionRequest);
 }

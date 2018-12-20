@@ -80,4 +80,32 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new ResourceNotFoundException("TransactionId " + transactionId + " not found"));
     }
+
+    @Override
+    public Transaction editTransaction(Transaction transactionRequest){
+        if(!transactionRepository.existsById(transactionRequest.getId())) {
+            throw new ResourceNotFoundException("TransactionId " + transactionRequest.getId() + " not found");
+        }
+
+        return transactionRepository.findById(transactionRequest.getId()).map(transaction -> {
+
+            Account account = accountService.findAccountById(transaction.getAccount().getId());
+            account.setBalance(account.getBalance() - transaction.getAmount());
+            accountService.saveAccount(account);
+
+            account = accountService.findAccountById(transactionRequest.getAccount().getId());
+            account.setBalance(account.getBalance() + transactionRequest.getAmount());
+            accountService.saveAccount(account);
+
+            transaction.setAccount(transactionRequest.getAccount());
+            transaction.setCategory(transactionRequest.getCategory());
+            transaction.setSubCategory(transactionRequest.getSubCategory());
+            transaction.setAmount(transactionRequest.getAmount());
+            transaction.setDate(transactionRequest.getDate());
+            transaction.setDescription(transactionRequest.getDescription());
+            transaction.setType(transactionRequest.getType());
+            return transactionRepository.save(transaction);
+        }).orElseThrow(() -> new ResourceNotFoundException("TransactionId " + transactionRequest.getId() + "not found"));
+    }
+
 }
