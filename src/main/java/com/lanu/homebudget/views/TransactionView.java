@@ -4,13 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 public class TransactionView {
 
     private Long id;
-    private LocalDate date;
+    private LocalDateTime date;
     private String type;
     private String description;
     private double amount;

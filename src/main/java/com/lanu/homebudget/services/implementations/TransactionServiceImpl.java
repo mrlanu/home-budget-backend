@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
@@ -45,9 +46,9 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<TransactionView> findAllByUserAndDateBetween(User user, Date date) {
 
-        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate localDateStart = localDate.withDayOfMonth(1);
-        LocalDate localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
+        LocalDateTime localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        LocalDateTime localDateStart = localDate.withDayOfMonth(1);
+        LocalDateTime localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
 
         return transactionRepository.findAllByUserAndDateBetween(user, localDateStart, localDateEnd)
                 .stream()

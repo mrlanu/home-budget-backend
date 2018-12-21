@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,9 +33,9 @@ public class SummaryServiceImpl implements SummaryService {
     @Override
     public List<Group> getSummaryByCategory(User user, Date date, Transaction.TransactionType type) {
 
-        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate localDateStart = localDate.withDayOfMonth(1);
-        LocalDate localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
+        LocalDateTime localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        LocalDateTime localDateStart = localDate.withDayOfMonth(1);
+        LocalDateTime localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
 
         List<Group> result = new ArrayList<>();
 
@@ -104,9 +105,9 @@ public class SummaryServiceImpl implements SummaryService {
         Date date = new Date();
         double accountsTotal;
 
-        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate localDateStart = localDate.withDayOfMonth(1);
-        LocalDate localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
+        LocalDateTime localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        LocalDateTime localDateStart = localDate.withDayOfMonth(1);
+        LocalDateTime localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
 
         List<Transaction> transactionList = transactionRepository
                 .findAllByUserAndDateBetween(user, localDateStart, localDateEnd);
