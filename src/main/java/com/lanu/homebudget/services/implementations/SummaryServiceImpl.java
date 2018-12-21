@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -127,5 +128,25 @@ public class SummaryServiceImpl implements SummaryService {
         return new Brief(accountsTotal,
                 transactionTypeDoubleMap.getOrDefault(Transaction.TransactionType.EXPENSE, 0.0),
                 transactionTypeDoubleMap.getOrDefault(Transaction.TransactionType.INCOME, 0.0));
+    }
+
+    public YearMonthSum getSumsByMonth(User user, Transaction.TransactionType transactionType) {
+
+        YearMonthSum result = new YearMonthSum(new ArrayList<>(), new ArrayList<>());
+
+        List<Transaction> transactionList = transactionRepository.findAllByUser(user);
+
+        Map<YearMonth, Double> yearMonthDoubleMap = transactionList.stream()
+                .filter(transaction -> transaction.getType() == transactionType)
+                .collect(Collectors
+                        .groupingBy(e -> YearMonth.of(e.getDate().getYear(), e.getDate().getMonth().getValue()),
+                                Collectors.summingDouble(Transaction::getAmount)));
+
+        yearMonthDoubleMap.forEach((k, v) -> {
+            result.getDate().add(k);
+            result.getSum().add(v < 0 ? v * -1 : v);
+        });
+
+        return result;
     }
 }

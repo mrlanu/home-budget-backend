@@ -7,6 +7,7 @@ import com.lanu.homebudget.services.SummaryService;
 import com.lanu.homebudget.views.Brief;
 import com.lanu.homebudget.views.Group;
 import com.lanu.homebudget.views.GroupAccount;
+import com.lanu.homebudget.views.YearMonthSum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,5 +46,12 @@ public class SummaryController {
     public Brief getBrief(Principal principal){
         User user = userService.findByUsername(principal.getName()).get();
         return summaryService.getBrief(user);
+    }
+
+    @GetMapping("/sums-by-month")
+    public YearMonthSum getSomething(Principal principal,
+                                     @RequestParam(name = "type")Transaction.TransactionType type){
+        User user = userService.findByUsername(principal.getName()).get();
+        return summaryService.getSumsByMonth(user, type);
     }
 }
