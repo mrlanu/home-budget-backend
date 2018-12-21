@@ -12,14 +12,10 @@ import com.lanu.homebudget.views.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -132,12 +128,18 @@ public class SummaryServiceImpl implements SummaryService {
 
     public YearMonthSum getSumsByMonth(User user, Transaction.TransactionType transactionType) {
 
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime dateEnd = today.withDayOfMonth(1).plusMonths(1).minusDays(1);
+        LocalDateTime dateStart = dateEnd.minusYears(1).plusDays(1);
+
         YearMonthSum result = new YearMonthSum(new ArrayList<>(), new ArrayList<>());
 
-        List<Transaction> transactionList = transactionRepository.findAllByUser(user);
+        List<Transaction> transactionList = transactionRepository
+                .findAllByUserAndDateBetweenAndType(user, dateStart, dateEnd, transactionType);
 
         Map<YearMonth, Double> yearMonthDoubleMap = transactionList.stream()
                 .filter(transaction -> transaction.getType() == transactionType)
+                .sorted(Comparator.comparing(Transaction::getDate).reversed())
                 .collect(Collectors
                         .groupingBy(e -> YearMonth.of(e.getDate().getYear(), e.getDate().getMonth().getValue()),
                                 Collectors.summingDouble(Transaction::getAmount)));
@@ -147,6 +149,29 @@ public class SummaryServiceImpl implements SummaryService {
             result.getSum().add(v < 0 ? v * -1 : v);
         });
 
-        return result;
+        return checkGapsInResultArray(result);
+    }
+
+    // the method checks passed Array if it has any missed month and fill them with the sum equal 0.0
+    private YearMonthSum checkGapsInResultArray(YearMonthSum yearMonthSum){
+
+        YearMonth lastMonthInArray = yearMonthSum.getDate().get(yearMonthSum.getDate().size() -1);
+        YearMonth monthShouldBe = lastMonthInArray.minusYears(1).plusMonths(1);
+
+        for (int i = 0; i < yearMonthSum.getDate().size(); i++){
+            YearMonth monthPresentInArray = yearMonthSum.getDate().get(i);
+
+            if (monthPresentInArray.equals(monthShouldBe)){
+                monthShouldBe = monthShouldBe.plusMonths(1);
+            } else {
+                yearMonthSum.getDate().add(i, monthShouldBe);
+                yearMonthSum.getSum().add(i, 0.0);
+                monthShouldBe = monthShouldBe.plusMonths(1);
+            }
+            if (monthPresentInArray.equals(lastMonthInArray)){
+                break;
+            }
+        }
+        return yearMonthSum;
     }
 }
