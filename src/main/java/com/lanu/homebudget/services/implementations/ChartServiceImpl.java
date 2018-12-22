@@ -48,6 +48,8 @@ public class ChartServiceImpl implements ChartService {
         result.add(checkGapsInResultArray(resultIncomes));
         result.add(checkGapsInResultArray(resultExspenses));
 
+        getSumsByCategoryAndMonth((long) 1);
+
         return result;
     }
 
@@ -81,7 +83,7 @@ public class ChartServiceImpl implements ChartService {
         return yearMonthSum;
     }
 
-    /*public YearMonthSum getSumsByMonth(User user, Transaction.TransactionType transactionType) {
+    public YearMonthSum getSumsByCategoryAndMonth(Long transactionId) {
 
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime dateEnd = today.withDayOfMonth(1).plusMonths(1).minusDays(1);
@@ -90,10 +92,9 @@ public class ChartServiceImpl implements ChartService {
         YearMonthSum result = new YearMonthSum(new ArrayList<>(), new ArrayList<>());
 
         List<Transaction> transactionList = transactionRepository
-                .findAllByUserAndDateBetweenAndType(user, dateStart, dateEnd, transactionType);
+                .findAllByCategory_IdAndDateBetween(transactionId, dateStart, dateEnd);
 
         Map<YearMonth, Double> yearMonthDoubleMap = transactionList.stream()
-                .filter(transaction -> transaction.getType() == transactionType)
                 .sorted(Comparator.comparing(Transaction::getDate).reversed())
                 .collect(Collectors
                         .groupingBy(e -> YearMonth.of(e.getDate().getYear(), e.getDate().getMonth().getValue()),
@@ -104,8 +105,6 @@ public class ChartServiceImpl implements ChartService {
             result.getSum().add(v < 0 ? v * -1 : v);
         });
 
-        List<YearMonthSum> yearMonthSumList = getSumsOfIncomesExpensesForYearByMonth(user);
-
         return checkGapsInResultArray(result);
-    }*/
+    }
 }

@@ -7,6 +7,7 @@ import com.lanu.homebudget.views.YearMonthSum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
@@ -26,5 +27,10 @@ public class ChartController {
     public List<YearMonthSum> getSumsOfIncomesExpensesForYearByMonth(Principal principal){
         User user = userService.findByUsername(principal.getName()).get();
         return chartService.getSumsOfIncomesExpensesForYearByMonth(user);
+    }
+
+    @GetMapping("/spentMonthToMonthByCategory")
+    public YearMonthSum getSpentMonthToMonthByCategory(@RequestParam(name = "categoryId")Long categoryId){
+        return chartService.getSumsByCategoryAndMonth(categoryId);
     }
 }
