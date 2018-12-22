@@ -48,10 +48,9 @@ public class SummaryController {
         return summaryService.getBrief(user);
     }
 
-    @GetMapping("/sums-by-month")
-    public YearMonthSum getSomething(Principal principal,
-                                     @RequestParam(name = "type")Transaction.TransactionType type){
+    @GetMapping("/sumsOfIncomesExpensesForYearByMonth")
+    public List<YearMonthSum> getSomething(Principal principal){
         User user = userService.findByUsername(principal.getName()).get();
-        return summaryService.getSumsByMonth(user, type);
+        return summaryService.getSumsOfIncomesExpensesForYearByMonth(user);
     }
 }

@@ -16,5 +16,6 @@ public interface SummaryService {
     List<Group> getSummaryByCategory(User user, Date date, Transaction.TransactionType type);
     List<GroupAccount> getSummaryOfAccounts(User user);
     Brief getBrief(User user);
-    YearMonthSum getSumsByMonth(User user, Transaction.TransactionType transactionType);
+    /*YearMonthSum getSumsByMonth(User user, Transaction.TransactionType transactionType);*/
+    List<YearMonthSum> getSumsOfIncomesExpensesForYearByMonth(User user);
 }

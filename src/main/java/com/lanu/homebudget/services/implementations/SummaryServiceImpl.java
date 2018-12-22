@@ -126,30 +126,40 @@ public class SummaryServiceImpl implements SummaryService {
                 transactionTypeDoubleMap.getOrDefault(Transaction.TransactionType.INCOME, 0.0));
     }
 
-    public YearMonthSum getSumsByMonth(User user, Transaction.TransactionType transactionType) {
+    public List<YearMonthSum> getSumsOfIncomesExpensesForYearByMonth(User user) {
 
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime dateEnd = today.withDayOfMonth(1).plusMonths(1).minusDays(1);
         LocalDateTime dateStart = dateEnd.minusYears(1).plusDays(1);
 
-        YearMonthSum result = new YearMonthSum(new ArrayList<>(), new ArrayList<>());
+        List<YearMonthSum> result = new ArrayList<>();
+        YearMonthSum resultIncomes = new YearMonthSum(new ArrayList<>(), new ArrayList<>());
+        YearMonthSum resultExspenses = new YearMonthSum(new ArrayList<>(), new ArrayList<>());
 
         List<Transaction> transactionList = transactionRepository
-                .findAllByUserAndDateBetweenAndType(user, dateStart, dateEnd, transactionType);
+                .findAllByUserAndDateBetween(user, dateStart, dateEnd);
 
-        Map<YearMonth, Double> yearMonthDoubleMap = transactionList.stream()
-                .filter(transaction -> transaction.getType() == transactionType)
+        Map<Transaction.TransactionType, Map<YearMonth, Double>> yearMonthDoubleMap = transactionList
+                .stream()
                 .sorted(Comparator.comparing(Transaction::getDate).reversed())
-                .collect(Collectors
-                        .groupingBy(e -> YearMonth.of(e.getDate().getYear(), e.getDate().getMonth().getValue()),
-                                Collectors.summingDouble(Transaction::getAmount)));
+                .collect(Collectors.groupingBy(Transaction::getType,
+                        Collectors.groupingBy(e -> YearMonth.of(e.getDate().getYear(), e.getDate().getMonth().getValue()),
+                                Collectors.summingDouble(Transaction::getAmount))));
 
-        yearMonthDoubleMap.forEach((k, v) -> {
-            result.getDate().add(k);
-            result.getSum().add(v < 0 ? v * -1 : v);
+        fillYearMonthSum(resultIncomes, yearMonthDoubleMap.get(Transaction.TransactionType.INCOME));
+        fillYearMonthSum(resultExspenses, yearMonthDoubleMap.get(Transaction.TransactionType.EXPENSE));
+
+        result.add(checkGapsInResultArray(resultIncomes));
+        result.add(checkGapsInResultArray(resultExspenses));
+
+        return result;
+    }
+
+    private void fillYearMonthSum(YearMonthSum yearMonthSum, Map<YearMonth, Double> map){
+        map.forEach((k, v) -> {
+            yearMonthSum.getDate().add(k);
+            yearMonthSum.getSum().add(v < 0 ? v * -1 : v);
         });
-
-        return checkGapsInResultArray(result);
     }
 
     // the method checks passed Array if it has any missed month and fill them with the sum equal 0.0
@@ -174,4 +184,32 @@ public class SummaryServiceImpl implements SummaryService {
         }
         return yearMonthSum;
     }
+
+    /*public YearMonthSum getSumsByMonth(User user, Transaction.TransactionType transactionType) {
+
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime dateEnd = today.withDayOfMonth(1).plusMonths(1).minusDays(1);
+        LocalDateTime dateStart = dateEnd.minusYears(1).plusDays(1);
+
+        YearMonthSum result = new YearMonthSum(new ArrayList<>(), new ArrayList<>());
+
+        List<Transaction> transactionList = transactionRepository
+                .findAllByUserAndDateBetweenAndType(user, dateStart, dateEnd, transactionType);
+
+        Map<YearMonth, Double> yearMonthDoubleMap = transactionList.stream()
+                .filter(transaction -> transaction.getType() == transactionType)
+                .sorted(Comparator.comparing(Transaction::getDate).reversed())
+                .collect(Collectors
+                        .groupingBy(e -> YearMonth.of(e.getDate().getYear(), e.getDate().getMonth().getValue()),
+                                Collectors.summingDouble(Transaction::getAmount)));
+
+        yearMonthDoubleMap.forEach((k, v) -> {
+            result.getDate().add(k);
+            result.getSum().add(v < 0 ? v * -1 : v);
+        });
+
+        List<YearMonthSum> yearMonthSumList = getSumsOfIncomesExpensesForYearByMonth(user);
+
+        return checkGapsInResultArray(result);
+    }*/
 }
