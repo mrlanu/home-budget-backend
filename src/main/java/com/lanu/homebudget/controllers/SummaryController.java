@@ -47,10 +47,4 @@ public class SummaryController {
         User user = userService.findByUsername(principal.getName()).get();
         return summaryService.getBrief(user);
     }
-
-    @GetMapping("/sumsOfIncomesExpensesForYearByMonth")
-    public List<YearMonthSum> getSomething(Principal principal){
-        User user = userService.findByUsername(principal.getName()).get();
-        return summaryService.getSumsOfIncomesExpensesForYearByMonth(user);
-    }
 }
