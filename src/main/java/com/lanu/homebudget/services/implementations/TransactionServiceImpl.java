@@ -1,18 +1,21 @@
 package com.lanu.homebudget.services.implementations;
 
 import com.lanu.homebudget.entities.Account;
+import com.lanu.homebudget.entities.Category;
+import com.lanu.homebudget.entities.SubCategory;
 import com.lanu.homebudget.entities.Transaction;
 import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.repositories.TransactionRepository;
 import com.lanu.homebudget.security.User;
 import com.lanu.homebudget.services.AccountService;
+import com.lanu.homebudget.services.CategoryService;
+import com.lanu.homebudget.services.SubCategoryService;
 import com.lanu.homebudget.services.TransactionService;
 import com.lanu.homebudget.views.TransactionView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -27,6 +30,50 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private SubCategoryService subCategoryService;
+
+    @Override
+    public Transaction createTransaction(User user, Transaction transaction) {
+        transaction.setUser(user);
+        Account account = accountService.findAccountById(transaction.getAccount().getId());
+
+        account.setBalance(account.getBalance() + transaction.getAmount());
+
+        accountService.saveAccount(account);
+        return transactionRepository.save(transaction);
+    }
+
+    @Override
+    public Transaction editTransaction(Transaction transactionRequest){
+        if(!transactionRepository.existsById(transactionRequest.getId())) {
+            throw new ResourceNotFoundException("TransactionId " + transactionRequest.getId() + " not found");
+        }
+
+        return transactionRepository.findById(transactionRequest.getId()).map(transaction -> {
+
+            Account account = accountService.findAccountById(transaction.getAccount().getId());
+            account.setBalance(account.getBalance() - transaction.getAmount());
+            accountService.saveAccount(account);
+
+            account = accountService.findAccountById(transactionRequest.getAccount().getId());
+            account.setBalance(account.getBalance() + transactionRequest.getAmount());
+            accountService.saveAccount(account);
+
+            transaction.setAccount(transactionRequest.getAccount());
+            transaction.setCategory(transactionRequest.getCategory());
+            transaction.setSubCategory(transactionRequest.getSubCategory());
+            transaction.setAmount(transactionRequest.getAmount());
+            transaction.setDate(transactionRequest.getDate());
+            transaction.setDescription(transactionRequest.getDescription());
+            transaction.setType(transactionRequest.getType());
+            return transactionRepository.save(transaction);
+        }).orElseThrow(() -> new ResourceNotFoundException("TransactionId " + transactionRequest.getId() + "not found"));
+    }
 
     @Override
     public ResponseEntity<?> deleteTransaction(Long transactionId) {
@@ -66,47 +113,34 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Transaction createTransaction(User user, Transaction transaction) {
-        transaction.setUser(user);
-        Account account = accountService.findAccountById(transaction.getAccount().getId());
-
-        account.setBalance(account.getBalance() + transaction.getAmount());
-
-        accountService.saveAccount(account);
-        return transactionRepository.save(transaction);
-    }
-
-    @Override
     public Transaction getTransactionById(Long transactionId) {
         return transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new ResourceNotFoundException("TransactionId " + transactionId + " not found"));
     }
 
     @Override
-    public Transaction editTransaction(Transaction transactionRequest){
-        if(!transactionRepository.existsById(transactionRequest.getId())) {
-            throw new ResourceNotFoundException("TransactionId " + transactionRequest.getId() + " not found");
-        }
+    public Transaction createTransfer(User user, Long fromAccId, Long toAccId, double amount) {
+        Account accFrom = accountService.findAccountById(fromAccId);
+        Account accTo = accountService.findAccountById(toAccId);
+        accFrom.setBalance(accFrom.getBalance() - amount);
+        accTo.setBalance(accTo.getBalance() + amount);
 
-        return transactionRepository.findById(transactionRequest.getId()).map(transaction -> {
+        Category category = categoryService.findByUserAndName(user, "Transfer");
+        SubCategory subCategoryOut = subCategoryService.findByCategoryAndName(category, "Out");
+        SubCategory subCategoryIn = subCategoryService.findByCategoryAndName(category, "In");
 
-            Account account = accountService.findAccountById(transaction.getAccount().getId());
-            account.setBalance(account.getBalance() - transaction.getAmount());
-            accountService.saveAccount(account);
+        Transaction transferOut = new Transaction(
+                null, LocalDateTime.now(), Transaction.TransactionType.TRANSFER,
+                "to " + accTo.getName(), -amount, category, subCategoryOut, accFrom, user);
+        Transaction transferIn = new Transaction(
+                null, LocalDateTime.now(), Transaction.TransactionType.TRANSFER,
+                "from " + accFrom.getName(), amount, category, subCategoryIn, accTo, user);
 
-            account = accountService.findAccountById(transactionRequest.getAccount().getId());
-            account.setBalance(account.getBalance() + transactionRequest.getAmount());
-            accountService.saveAccount(account);
+        accountService.saveAccount(accFrom);
+        accountService.saveAccount(accTo);
+        transactionRepository.save(transferOut);
+        transactionRepository.save(transferIn);
 
-            transaction.setAccount(transactionRequest.getAccount());
-            transaction.setCategory(transactionRequest.getCategory());
-            transaction.setSubCategory(transactionRequest.getSubCategory());
-            transaction.setAmount(transactionRequest.getAmount());
-            transaction.setDate(transactionRequest.getDate());
-            transaction.setDescription(transactionRequest.getDescription());
-            transaction.setType(transactionRequest.getType());
-            return transactionRepository.save(transaction);
-        }).orElseThrow(() -> new ResourceNotFoundException("TransactionId " + transactionRequest.getId() + "not found"));
+        return transferOut;
     }
-
 }

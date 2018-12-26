@@ -2,12 +2,16 @@ package com.lanu.homebudget.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lanu.homebudget.security.User;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Category {
 
     @Id

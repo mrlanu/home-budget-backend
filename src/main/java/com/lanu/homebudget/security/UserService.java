@@ -4,7 +4,7 @@ import java.util.Optional;
 
 public interface UserService {
 
-    User save(User user);
+    User createUser(User user);
 
     boolean existByUsername(String username);
 

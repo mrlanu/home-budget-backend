@@ -1,5 +1,6 @@
 package com.lanu.homebudget.services.implementations;
 
+import com.lanu.homebudget.entities.Category;
 import com.lanu.homebudget.entities.SubCategory;
 import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.repositories.SubCategoryRepository;
@@ -30,5 +31,10 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     @Override
     public List<SubCategory> findAllByCategory_Id(Long categoryId) {
         return subCategoryRepository.findAllByCategory_Id(categoryId);
+    }
+
+    @Override
+    public SubCategory findByCategoryAndName(Category category, String name) {
+        return subCategoryRepository.findByCategoryAndName(category, name);
     }
 }

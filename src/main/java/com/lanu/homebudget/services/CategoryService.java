@@ -11,4 +11,5 @@ public interface CategoryService {
     Category createCategory(User user, Category category);
     List<Category> findCategoriesByUser(User user);
     Optional<Category> findById(Long id);
+    Category findByUserAndName(User user, String categoryName);
 }
