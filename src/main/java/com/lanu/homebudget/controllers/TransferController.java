@@ -1,6 +1,5 @@
 package com.lanu.homebudget.controllers;
 
-import com.lanu.homebudget.entities.Transaction;
 import com.lanu.homebudget.entities.Transfer;
 import com.lanu.homebudget.security.User;
 import com.lanu.homebudget.security.UserService;
@@ -9,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 @RestController
 public class TransferController {
@@ -26,10 +28,13 @@ public class TransferController {
 
     @PostMapping("/transfers")
     public Transfer createTransfer(Principal principal,
+                                   @RequestParam(name = "date") Date date,
                                    @RequestParam(name = "accFromId")Long accFromId,
                                    @RequestParam(name = "accToId")Long accToId,
                                    @RequestParam(name = "amount")double amount){
         User user = userService.findByUsername(principal.getName()).get();
-        return transferService.createTransfer(user, accFromId, accToId, amount);
+        LocalDateTime localDate = LocalDateTime.ofInstant(
+                date.toInstant(), ZoneId.systemDefault());
+        return transferService.createTransfer(user, localDate, accFromId, accToId, amount);
     }
 }

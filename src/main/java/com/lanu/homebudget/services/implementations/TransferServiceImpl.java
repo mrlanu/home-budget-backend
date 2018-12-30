@@ -32,7 +32,7 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
-    public Transfer createTransfer(User user, Long fromAccId, Long toAccId, double amount) {
+    public Transfer createTransfer(User user, LocalDateTime date, Long fromAccId, Long toAccId, double amount) {
         Account accFrom = accountService.findAccountById(fromAccId);
         Account accTo = accountService.findAccountById(toAccId);
         accFrom.setBalance(accFrom.getBalance() - amount);
@@ -42,7 +42,7 @@ public class TransferServiceImpl implements TransferService {
         accountService.saveAccount(accTo);
 
         Transfer transfer =
-                new Transfer(null, LocalDateTime.now(), accFrom, accTo, amount, user);
+                new Transfer(null, date, accFrom, accTo, amount, user);
 
         return transferRepository.save(transfer);
     }
