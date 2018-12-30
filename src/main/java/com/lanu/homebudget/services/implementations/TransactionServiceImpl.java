@@ -7,10 +7,7 @@ import com.lanu.homebudget.entities.Transaction;
 import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.repositories.TransactionRepository;
 import com.lanu.homebudget.security.User;
-import com.lanu.homebudget.services.AccountService;
-import com.lanu.homebudget.services.CategoryService;
-import com.lanu.homebudget.services.SubCategoryService;
-import com.lanu.homebudget.services.TransactionService;
+import com.lanu.homebudget.services.*;
 import com.lanu.homebudget.views.TransactionView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,10 +31,7 @@ public class TransactionServiceImpl implements TransactionService {
     private AccountService accountService;
 
     @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private SubCategoryService subCategoryService;
+    private TransferService transferService;
 
     @Override
     public Transaction createTransaction(User user, Transaction transaction) {
@@ -93,11 +89,13 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<TransactionView> findAllByUserAndDateBetween(User user, Date date) {
 
+        List<TransactionView> result = new ArrayList<>();
+
         LocalDateTime localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime localDateStart = localDate.withDayOfMonth(1);
         LocalDateTime localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
 
-        return transactionRepository.findAllByUserAndDateBetween(user, localDateStart, localDateEnd)
+         List<TransactionView> transactions = transactionRepository.findAllByUserAndDateBetween(user, localDateStart, localDateEnd)
                 .stream()
                 .map(transaction -> new TransactionView(
                         transaction.getId(),
@@ -110,37 +108,21 @@ public class TransactionServiceImpl implements TransactionService {
                         transaction.getAccount().getName(),
                         transaction.getAccount().getType()))
                 .collect(Collectors.toList());
+
+         List<TransactionView> transfers = transferService.findAllByUserAndDateBetween(user, date);
+
+         result.addAll(transactions);
+         result.addAll(transfers);
+
+         return result
+                 .stream()
+                 .sorted(Comparator.comparing(TransactionView::getDate).reversed())
+                 .collect(Collectors.toList());
     }
 
     @Override
     public Transaction getTransactionById(Long transactionId) {
         return transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new ResourceNotFoundException("TransactionId " + transactionId + " not found"));
-    }
-
-    @Override
-    public Transaction createTransfer(User user, Long fromAccId, Long toAccId, double amount) {
-        Account accFrom = accountService.findAccountById(fromAccId);
-        Account accTo = accountService.findAccountById(toAccId);
-        accFrom.setBalance(accFrom.getBalance() - amount);
-        accTo.setBalance(accTo.getBalance() + amount);
-
-        Category category = categoryService.findByUserAndName(user, "Transfer");
-        SubCategory subCategoryOut = subCategoryService.findByCategoryAndName(category, "Out");
-        SubCategory subCategoryIn = subCategoryService.findByCategoryAndName(category, "In");
-
-        Transaction transferOut = new Transaction(
-                null, LocalDateTime.now(), Transaction.TransactionType.TRANSFER,
-                "to " + accTo.getName(), -amount, category, subCategoryOut, accFrom, user);
-        Transaction transferIn = new Transaction(
-                null, LocalDateTime.now(), Transaction.TransactionType.TRANSFER,
-                "from " + accFrom.getName(), amount, category, subCategoryIn, accTo, user);
-
-        accountService.saveAccount(accFrom);
-        accountService.saveAccount(accTo);
-        transactionRepository.save(transferOut);
-        transactionRepository.save(transferIn);
-
-        return transferOut;
     }
 }

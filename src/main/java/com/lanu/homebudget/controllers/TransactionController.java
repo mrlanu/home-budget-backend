@@ -23,15 +23,6 @@ public class TransactionController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/transfers")
-    public Transaction createTransfer(Principal principal,
-                                      @RequestParam(name = "accFromId")Long accFromId,
-                                      @RequestParam(name = "accToId")Long accToId,
-                                      @RequestParam(name = "amount")double amount){
-        User user = userService.findByUsername(principal.getName()).get();
-        return transactionService.createTransfer(user, accFromId, accToId, amount);
-    }
-
     @GetMapping("/transactions")
     public List<TransactionView> getAllTransactions(Principal principal, @RequestParam(name = "date") Date date){
         User user = userService.findByUsername(principal.getName()).get();

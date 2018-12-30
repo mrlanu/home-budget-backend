@@ -15,5 +15,4 @@ public interface TransactionService {
     Transaction getTransactionById(Long id);
     ResponseEntity<?> deleteTransaction(Long transactionId);
     Transaction editTransaction(Transaction transactionRequest);
-    Transaction createTransfer(User user, Long fromAccId, Long toAccId, double amount);
 }
