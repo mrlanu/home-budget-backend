@@ -1,6 +1,7 @@
 package com.lanu.homebudget.services.implementations;
 
 import com.lanu.homebudget.entities.Account;
+import com.lanu.homebudget.entities.Transaction;
 import com.lanu.homebudget.entities.Transfer;
 import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.repositories.TransferRepository;
@@ -43,6 +44,39 @@ public class TransferServiceImpl implements TransferService {
         transfer.setUser(user);
 
         return transferRepository.save(transfer);
+    }
+
+    @Override
+    public Transfer editTransfer(Transfer transferRequest){
+        if(!transferRepository.existsById(transferRequest.getId())) {
+            throw new ResourceNotFoundException("TransferId " + transferRequest.getId() + " not found");
+        }
+
+        return transferRepository.findById(transferRequest.getId()).map(transfer -> {
+
+                Account accountFrom = accountService.findAccountById(transfer.getFromAccount().getId());
+                accountFrom.setBalance(accountFrom.getBalance() + transfer.getAmount());
+                accountService.saveAccount(accountFrom);
+
+                accountFrom = accountService.findAccountById(transferRequest.getFromAccount().getId());
+                accountFrom.setBalance(accountFrom.getBalance() - transferRequest.getAmount());
+                accountService.saveAccount(accountFrom);
+
+                Account accountTo = accountService.findAccountById(transfer.getToAccount().getId());
+                accountTo.setBalance(accountTo.getBalance() - transfer.getAmount());
+                accountService.saveAccount(accountTo);
+
+                accountTo = accountService.findAccountById(transferRequest.getToAccount().getId());
+                accountTo.setBalance(accountTo.getBalance() + transferRequest.getAmount());
+                accountService.saveAccount(accountTo);
+
+            transfer.setFromAccount(transferRequest.getFromAccount());
+            transfer.setToAccount(transferRequest.getToAccount());
+            transfer.setAmount(transferRequest.getAmount());
+            transfer.setDate(transferRequest.getDate());
+
+            return transferRepository.save(transfer);
+        }).orElseThrow(() -> new ResourceNotFoundException("TransferId " + transferRequest.getId() + "not found"));
     }
 
     @Override

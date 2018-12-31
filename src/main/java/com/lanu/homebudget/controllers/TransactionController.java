@@ -46,7 +46,7 @@ public class TransactionController {
     }
 
     @PutMapping("/transactions")
-    public Transaction updateComment(@Valid @RequestBody Transaction transaction) {
+    public Transaction updateTransaction(@Valid @RequestBody Transaction transaction) {
         return transactionService.editTransaction(transaction);
     }
 

@@ -10,4 +10,5 @@ public interface TransferService {
     Transfer getTransferById(Long transferId);
     List<Transfer> findAllByUserAndDateBetween(User user, Date date);
     Transfer createTransfer(User user, Transfer transfer);
+    Transfer editTransfer(Transfer transferRequest);
 }

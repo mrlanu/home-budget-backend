@@ -1,5 +1,6 @@
 package com.lanu.homebudget.controllers;
 
+import com.lanu.homebudget.entities.Transaction;
 import com.lanu.homebudget.entities.Transfer;
 import com.lanu.homebudget.security.User;
 import com.lanu.homebudget.security.UserService;
@@ -30,5 +31,10 @@ public class TransferController {
         /*LocalDateTime localDate = LocalDateTime.ofInstant(
                 date.toInstant(), ZoneId.systemDefault());*/
         return transferService.createTransfer(user, transfer);
+    }
+
+    @PutMapping("/transfers")
+    public Transfer updateTransfer(@Valid @RequestBody Transfer transfer) {
+        return transferService.editTransfer(transfer);
     }
 }
