@@ -35,6 +35,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Transaction createTransaction(User user, Transaction transaction) {
+        transaction.setDate(transaction.getDate().minusHours(6));
         transaction.setUser(user);
         Account account = accountService.findAccountById(transaction.getAccount().getId());
 
