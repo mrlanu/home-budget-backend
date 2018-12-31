@@ -87,37 +87,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionView> findAllByUserAndDateBetween(User user, Date date) {
-
-        List<TransactionView> result = new ArrayList<>();
+    public List<Transaction> findAllByUserAndDateBetween(User user, Date date) {
 
         LocalDateTime localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime localDateStart = localDate.withDayOfMonth(1);
         LocalDateTime localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
 
-         List<TransactionView> transactions = transactionRepository.findAllByUserAndDateBetween(user, localDateStart, localDateEnd)
-                .stream()
-                .map(transaction -> new TransactionView(
-                        transaction.getId(),
-                        transaction.getDate(),
-                        transaction.getType().toString(),
-                        transaction.getDescription(),
-                        transaction.getAmount(),
-                        transaction.getCategory().getName(),
-                        transaction.getSubCategory().getName(),
-                        transaction.getAccount().getName(),
-                        transaction.getAccount().getType()))
-                .collect(Collectors.toList());
-
-         List<TransactionView> transfers = transferService.findAllByUserAndDateBetween(user, date);
-
-         result.addAll(transactions);
-         result.addAll(transfers);
-
-         return result
-                 .stream()
-                 .sorted(Comparator.comparing(TransactionView::getDate).reversed())
-                 .collect(Collectors.toList());
+         return transactionRepository.findAllByUserAndDateBetween(user, localDateStart, localDateEnd);
     }
 
     @Override

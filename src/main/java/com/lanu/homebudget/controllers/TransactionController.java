@@ -4,6 +4,7 @@ import com.lanu.homebudget.entities.Transaction;
 import com.lanu.homebudget.security.User;
 import com.lanu.homebudget.security.UserService;
 import com.lanu.homebudget.services.TransactionService;
+import com.lanu.homebudget.services.TransactionViewService;
 import com.lanu.homebudget.views.TransactionView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +22,15 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @Autowired
+    private TransactionViewService transactionViewService;
+
+    @Autowired
     private UserService userService;
 
     @GetMapping("/transactions")
     public List<TransactionView> getAllTransactions(Principal principal, @RequestParam(name = "date") Date date){
         User user = userService.findByUsername(principal.getName()).get();
-        return transactionService.findAllByUserAndDateBetween(user, date);
+        return transactionViewService.mappingTransactionsAndTransfersToTransactionView(user, date);
     }
 
     @GetMapping("/transactions/{transactionId}")
