@@ -1,21 +1,19 @@
 package com.lanu.homebudget.services.implementations;
 
-import com.lanu.homebudget.entities.*;
+import com.lanu.homebudget.entities.Account;
+import com.lanu.homebudget.entities.Transfer;
 import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.repositories.TransferRepository;
 import com.lanu.homebudget.security.User;
 import com.lanu.homebudget.services.AccountService;
 import com.lanu.homebudget.services.TransferService;
-import com.lanu.homebudget.views.TransactionView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TransferServiceImpl implements TransferService {
@@ -33,17 +31,16 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
-    public Transfer createTransfer(User user, LocalDateTime date, Long fromAccId, Long toAccId, double amount) {
-        Account accFrom = accountService.findAccountById(fromAccId);
-        Account accTo = accountService.findAccountById(toAccId);
-        accFrom.setBalance(accFrom.getBalance() - amount);
-        accTo.setBalance(accTo.getBalance() + amount);
+    public Transfer createTransfer(User user, Transfer transfer) {
+        Account accFrom = accountService.findAccountById(transfer.getFromAccount().getId());
+        Account accTo = accountService.findAccountById(transfer.getToAccount().getId());
+        accFrom.setBalance(accFrom.getBalance() - transfer.getAmount());
+        accTo.setBalance(accTo.getBalance() + transfer.getAmount());
 
         accountService.saveAccount(accFrom);
         accountService.saveAccount(accTo);
 
-        Transfer transfer =
-                new Transfer(null, date, accFrom, accTo, amount, user);
+        transfer.setUser(user);
 
         return transferRepository.save(transfer);
     }

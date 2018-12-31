@@ -7,10 +7,8 @@ import com.lanu.homebudget.services.TransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 
 @RestController
 public class TransferController {
@@ -27,14 +25,10 @@ public class TransferController {
     }
 
     @PostMapping("/transfers")
-    public Transfer createTransfer(Principal principal,
-                                   @RequestParam(name = "date") Date date,
-                                   @RequestParam(name = "accFromId")Long accFromId,
-                                   @RequestParam(name = "accToId")Long accToId,
-                                   @RequestParam(name = "amount")double amount){
+    public Transfer createTransfer(Principal principal, @Valid @RequestBody Transfer transfer){
         User user = userService.findByUsername(principal.getName()).get();
-        LocalDateTime localDate = LocalDateTime.ofInstant(
-                date.toInstant(), ZoneId.systemDefault());
-        return transferService.createTransfer(user, localDate, accFromId, accToId, amount);
+        /*LocalDateTime localDate = LocalDateTime.ofInstant(
+                date.toInstant(), ZoneId.systemDefault());*/
+        return transferService.createTransfer(user, transfer);
     }
 }
