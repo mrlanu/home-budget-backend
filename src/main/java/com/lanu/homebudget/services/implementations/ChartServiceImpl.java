@@ -48,8 +48,6 @@ public class ChartServiceImpl implements ChartService {
         result.add(checkGapsInResultArray(resultIncomes));
         result.add(checkGapsInResultArray(resultExspenses));
 
-        getSumsByCategoryAndMonth((long) 1);
-
         return result;
     }
 
