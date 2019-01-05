@@ -9,6 +9,7 @@ import com.lanu.homebudget.security.User;
 import com.lanu.homebudget.services.AccountService;
 import com.lanu.homebudget.services.TransferService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,6 +34,7 @@ public class TransferServiceImpl implements TransferService {
 
     @Override
     public Transfer createTransfer(User user, Transfer transfer) {
+        transfer.setDate(transfer.getDate().minusHours(6));
         Account accFrom = accountService.findAccountById(transfer.getFromAccount().getId());
         Account accTo = accountService.findAccountById(transfer.getToAccount().getId());
         accFrom.setBalance(accFrom.getBalance() - transfer.getAmount());
@@ -77,6 +79,27 @@ public class TransferServiceImpl implements TransferService {
 
             return transferRepository.save(transfer);
         }).orElseThrow(() -> new ResourceNotFoundException("TransferId " + transferRequest.getId() + "not found"));
+    }
+
+    @Override
+    public ResponseEntity<?> deleteTransfer(Long transferId) {
+        if(!transferRepository.existsById(transferId)) {
+            throw new ResourceNotFoundException("TransferId " + transferId + " not found");
+        }
+
+        return transferRepository.findById(transferId).map(transfer -> {
+
+            Account fromAccount = transfer.getFromAccount();
+            fromAccount.setBalance(fromAccount.getBalance() + transfer.getAmount());
+            Account toAccount = transfer.getToAccount();
+            toAccount.setBalance(toAccount.getBalance() - transfer.getAmount());
+
+            accountService.saveAccount(fromAccount);
+            accountService.saveAccount(toAccount);
+
+            transferRepository.delete(transfer);
+            return ResponseEntity.ok().build();
+        }).orElseThrow(() -> new ResourceNotFoundException("transferId " + transferId + " not found"));
     }
 
     @Override
