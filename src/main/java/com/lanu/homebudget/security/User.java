@@ -1,5 +1,6 @@
 package com.lanu.homebudget.security;
 
+import com.lanu.homebudget.entities.Budget;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,6 +23,9 @@ public class User{
 
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
+
+    @ManyToMany
+    private List<Budget> budgets;
 
     private boolean active;
 }
