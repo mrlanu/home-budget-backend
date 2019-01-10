@@ -22,7 +22,7 @@ public class ChartServiceImpl implements ChartService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    public List<YearMonthSum> getSumsOfIncomesExpensesForYearByMonth(User user) {
+    public List<YearMonthSum> getSumsOfIncomesExpensesForYearByMonth(Long budgetId) {
 
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime dateEnd = today.withDayOfMonth(1).plusMonths(1).minusDays(1);
@@ -33,7 +33,7 @@ public class ChartServiceImpl implements ChartService {
         YearMonthSum resultExspenses = new YearMonthSum(new ArrayList<>(), new ArrayList<>());
 
         List<Transaction> transactionList = transactionRepository
-                .findAllByUserAndDateBetween(user, dateStart, dateEnd);
+                .findAllByBudget_IdAndDateBetween(budgetId, dateStart, dateEnd);
 
         Map<Transaction.TransactionType, Map<YearMonth, Double>> yearMonthDoubleMap = transactionList
                 .stream()

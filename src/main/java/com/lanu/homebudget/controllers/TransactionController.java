@@ -1,8 +1,6 @@
 package com.lanu.homebudget.controllers;
 
 import com.lanu.homebudget.entities.Transaction;
-import com.lanu.homebudget.security.User;
-import com.lanu.homebudget.security.UserService;
 import com.lanu.homebudget.services.TransactionService;
 import com.lanu.homebudget.services.TransactionViewService;
 import com.lanu.homebudget.views.TransactionView;
@@ -11,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 
@@ -24,13 +21,9 @@ public class TransactionController {
     @Autowired
     private TransactionViewService transactionViewService;
 
-    @Autowired
-    private UserService userService;
-
     @GetMapping("/transactions")
-    public List<TransactionView> getAllTransactions(Principal principal, @RequestParam(name = "date") Date date){
-        User user = userService.findByUsername(principal.getName()).get();
-        return transactionViewService.mappingTransactionsAndTransfersToTransactionView(user, date);
+    public List<TransactionView> getAllTransactions(@RequestParam(name = "budgetId") Long budgetId, @RequestParam(name = "date") Date date){
+        return transactionViewService.mappingTransactionsAndTransfersToTransactionView(budgetId, date);
     }
 
     @GetMapping("/transactions/{transactionId}")
@@ -39,10 +32,9 @@ public class TransactionController {
     }
 
     @PostMapping("/transactions")
-    public Transaction createTransaction(Principal principal,
+    public Transaction createTransaction(@RequestParam(name = "budgetId") Long budgetId,
                                          @Valid @RequestBody Transaction transaction){
-        User user = userService.findByUsername(principal.getName()).get();
-        return transactionService.createTransaction(user, transaction);
+        return transactionService.createTransaction(budgetId, transaction);
     }
 
     @PutMapping("/transactions")

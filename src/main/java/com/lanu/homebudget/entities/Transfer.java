@@ -29,8 +29,8 @@ public class Transfer {
     private double amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "budget_id")
     @JsonIgnore
-    private User user;
+    private Budget budget;
 
 }

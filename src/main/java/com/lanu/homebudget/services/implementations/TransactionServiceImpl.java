@@ -5,6 +5,7 @@ import com.lanu.homebudget.entities.Category;
 import com.lanu.homebudget.entities.SubCategory;
 import com.lanu.homebudget.entities.Transaction;
 import com.lanu.homebudget.exceptions.ResourceNotFoundException;
+import com.lanu.homebudget.repositories.BudgetRepository;
 import com.lanu.homebudget.repositories.TransactionRepository;
 import com.lanu.homebudget.security.User;
 import com.lanu.homebudget.services.*;
@@ -31,12 +32,12 @@ public class TransactionServiceImpl implements TransactionService {
     private AccountService accountService;
 
     @Autowired
-    private TransferService transferService;
+    private BudgetRepository budgetRepository;
 
     @Override
-    public Transaction createTransaction(User user, Transaction transaction) {
+    public Transaction createTransaction(Long budgetId, Transaction transaction) {
         transaction.setDate(transaction.getDate().minusHours(6));
-        transaction.setUser(user);
+        transaction.setBudget(budgetRepository.findById(budgetId).get());
         Account account = accountService.findAccountById(transaction.getAccount().getId());
 
         account.setBalance(account.getBalance() + transaction.getAmount());
@@ -88,13 +89,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> findAllByUserAndDateBetween(User user, Date date) {
+    public List<Transaction> findAllByBudgetIdAndDateBetween(Long budgetId, Date date) {
 
         LocalDateTime localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime localDateStart = localDate.withDayOfMonth(1);
         LocalDateTime localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
 
-         return transactionRepository.findAllByUserAndDateBetween(user, localDateStart, localDateEnd);
+         return transactionRepository.findAllByBudget_IdAndDateBetween(budgetId, localDateStart, localDateEnd);
     }
 
     @Override

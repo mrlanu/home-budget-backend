@@ -4,6 +4,7 @@ import com.lanu.homebudget.entities.Budget;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,4 +29,11 @@ public class User{
     private List<Budget> budgets;
 
     private boolean active;
+
+    public void addBudget(Budget budget){
+        if (budgets == null){
+            budgets = new ArrayList<>();
+        }
+        budgets.add(budget);
+    }
 }

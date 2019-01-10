@@ -7,5 +7,5 @@ import java.util.Date;
 import java.util.List;
 
 public interface TransactionViewService {
-    List<TransactionView> mappingTransactionsAndTransfersToTransactionView(User user, Date date);
+    List<TransactionView> mappingTransactionsAndTransfersToTransactionView(Long budgetId, Date date);
 }

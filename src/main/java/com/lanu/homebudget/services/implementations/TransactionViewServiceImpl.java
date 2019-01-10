@@ -23,11 +23,11 @@ public class TransactionViewServiceImpl implements TransactionViewService {
     @Autowired
     private TransferService transferService;
 
-    public List<TransactionView> mappingTransactionsAndTransfersToTransactionView(User user, Date date) {
+    public List<TransactionView> mappingTransactionsAndTransfersToTransactionView(Long budgetId, Date date) {
 
         List<TransactionView> result = new ArrayList<>();
-        List<Transaction> transactionList = transactionService.findAllByUserAndDateBetween(user, date);
-        List<Transfer> transferList = transferService.findAllByUserAndDateBetween(user, date);
+        List<Transaction> transactionList = transactionService.findAllByBudgetIdAndDateBetween(budgetId, date);
+        List<Transfer> transferList = transferService.findAllByBudgetIdAndDateBetween(budgetId, date);
 
         transactionList.forEach(transaction ->
                 result.add(new TransactionView(

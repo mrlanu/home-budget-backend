@@ -30,7 +30,7 @@ public class SummaryServiceImpl implements SummaryService {
    private AccountService accountService;
 
     @Override
-    public List<Group> getSummaryByCategory(User user, Date date, Transaction.TransactionType type) {
+    public List<Group> getSummaryByCategory(Long budgetId, Date date, Transaction.TransactionType type) {
 
         LocalDateTime localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime localDateStart = localDate.withDayOfMonth(1);
@@ -39,7 +39,7 @@ public class SummaryServiceImpl implements SummaryService {
         List<Group> result = new ArrayList<>();
 
         List<Transaction> transactionList = transactionRepository
-                .findAllByUserAndDateBetweenAndType(user, localDateStart, localDateEnd, type);
+                .findAllByBudget_IdAndDateBetweenAndType(budgetId, localDateStart, localDateEnd, type);
 
         Map<Category, Map<SubCategory, List<Transaction>>> groupedByCategory = transactionList
                 .stream()
@@ -81,8 +81,8 @@ public class SummaryServiceImpl implements SummaryService {
         return result;
     }
 
-    public List<GroupAccount> getSummaryOfAccounts(User user) {
-        List<Account> accountList = accountService.findAccountsByUser(user);
+    public List<GroupAccount> getSummaryOfAccounts(Long budgetId) {
+        List<Account> accountList = accountService.findAccountsByBudgetId(budgetId);
         List<GroupAccount> result = new ArrayList<>();
 
         Map<String, List<Account>> groupedByType = accountList.stream()
@@ -99,7 +99,7 @@ public class SummaryServiceImpl implements SummaryService {
     }
 
     @Override
-    public Brief getBrief(User user) {
+    public Brief getBrief(Long budgetId) {
 
         Date date = new Date();
         double accountsTotal;
@@ -109,7 +109,7 @@ public class SummaryServiceImpl implements SummaryService {
         LocalDateTime localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
 
         List<Transaction> transactionList = transactionRepository
-                .findAllByUserAndDateBetween(user, localDateStart, localDateEnd);
+                .findAllByBudget_IdAndDateBetween(budgetId, localDateStart, localDateEnd);
 
         Map<Transaction.TransactionType, Double> transactionTypeDoubleMap =
                 transactionList
@@ -117,7 +117,7 @@ public class SummaryServiceImpl implements SummaryService {
                 .collect(Collectors.groupingBy(
                         Transaction::getType, Collectors.summingDouble(Transaction::getAmount)));
 
-        accountsTotal = accountService.findAccountsByUser(user)
+        accountsTotal = accountService.findAccountsByBudgetId(budgetId)
                 .stream()
                 .filter(account -> account.isIncludeInTotal())
                 .mapToDouble(Account::getBalance)

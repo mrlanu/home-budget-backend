@@ -3,6 +3,7 @@ package com.lanu.homebudget.services.implementations;
 import com.lanu.homebudget.entities.Account;
 import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.repositories.AccountRepository;
+import com.lanu.homebudget.repositories.BudgetRepository;
 import com.lanu.homebudget.security.User;
 import com.lanu.homebudget.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,20 +18,23 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private BudgetRepository budgetRepository;
+
     @Override
     public Account saveAccount(Account account) {
         return accountRepository.save(account);
     }
 
     @Override
-    public Account createAccount(User user, Account account) {
-        account.setUser(user);
+    public Account createAccount(Long budgetId, Account account) {
+        account.setBudget(budgetRepository.findById(budgetId).get());
         return accountRepository.save(account);
     }
 
     @Override
-    public List<Account> findAccountsByUser(User user) {
-        return accountRepository.findAllByUser(user);
+    public List<Account> findAccountsByBudgetId(Long budgetId) {
+        return accountRepository.findAllByBudget_Id(budgetId);
     }
 
     @Override

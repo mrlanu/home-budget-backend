@@ -10,8 +10,8 @@ import java.util.List;
 
 public interface TransactionService {
 
-    List<Transaction> findAllByUserAndDateBetween(User user, Date date);
-    Transaction createTransaction(User user, Transaction transaction);
+    List<Transaction> findAllByBudgetIdAndDateBetween(Long budgetId, Date date);
+    Transaction createTransaction(Long budgetId, Transaction transaction);
     Transaction getTransactionById(Long id);
     ResponseEntity<?> deleteTransaction(Long transactionId);
     Transaction editTransaction(Transaction transactionRequest);

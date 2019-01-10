@@ -1,6 +1,7 @@
 package com.lanu.homebudget.services.implementations;
 
 import com.lanu.homebudget.entities.Category;
+import com.lanu.homebudget.repositories.BudgetRepository;
 import com.lanu.homebudget.repositories.CategoryRepository;
 import com.lanu.homebudget.security.User;
 import com.lanu.homebudget.services.CategoryService;
@@ -16,15 +17,17 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private BudgetRepository budgetRepository;
+
     @Override
-    public Category createCategory(User user, Category category) {
-        category.setUser(user);
+    public Category createCategory(Long budgetId, Category category) {
+        category.setBudget(budgetRepository.findById(budgetId).get());
         return categoryRepository.save(category);
     }
 
-    @Override
-    public List<Category> findCategoriesByUser(User user) {
-        return categoryRepository.findAllByUser(user);
+    public List<Category> findCategoriesByBudgetId(Long budgetId) {
+        return categoryRepository.findAllByBudget_Id(budgetId);
     }
 
     @Override
@@ -33,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category findByUserAndName(User user, String categoryName) {
-        return categoryRepository.findByUserAndName(user, categoryName);
+    public Category findByBudgetIdAndName(Long budgetId, String categoryName) {
+        return categoryRepository.findByBudget_IdAndName(budgetId, categoryName);
     }
 }

@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface SummaryService {
-    List<Group> getSummaryByCategory(User user, Date date, Transaction.TransactionType type);
-    List<GroupAccount> getSummaryOfAccounts(User user);
-    Brief getBrief(User user);
+    List<Group> getSummaryByCategory(Long budgetId, Date date, Transaction.TransactionType type);
+    List<GroupAccount> getSummaryOfAccounts(Long budgetId);
+    Brief getBrief(Long budgetId);
 }

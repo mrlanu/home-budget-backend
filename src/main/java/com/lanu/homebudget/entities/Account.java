@@ -22,7 +22,7 @@ public class Account {
     private boolean includeInTotal;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "budget_id")
     @JsonIgnore
-    private User user;
+    private Budget budget;
 }

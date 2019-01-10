@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface ChartService {
     /*YearMonthSum getSumsByMonth(User user, Transaction.TransactionType transactionType);*/
-    List<YearMonthSum> getSumsOfIncomesExpensesForYearByMonth(User user);
+    List<YearMonthSum> getSumsOfIncomesExpensesForYearByMonth(Long budgetId);
     YearMonthSum getSumsByCategoryAndMonth(Long transactionId);
 }

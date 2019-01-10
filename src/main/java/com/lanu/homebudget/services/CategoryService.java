@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public interface CategoryService {
 
-    Category createCategory(User user, Category category);
-    List<Category> findCategoriesByUser(User user);
+    Category createCategory(Long budgetId, Category category);
+    List<Category> findCategoriesByBudgetId(Long budgetId);
     Optional<Category> findById(Long id);
-    Category findByUserAndName(User user, String categoryName);
+    Category findByBudgetIdAndName(Long budgetId, String categoryName);
 }

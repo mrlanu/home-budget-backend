@@ -1,9 +1,11 @@
 package com.lanu.homebudget.security;
 
+import com.lanu.homebudget.entities.Budget;
 import com.lanu.homebudget.entities.Category;
 import com.lanu.homebudget.entities.SubCategory;
 import com.lanu.homebudget.entities.Transaction;
 import com.lanu.homebudget.exceptions.UserAlreadyExistsException;
+import com.lanu.homebudget.repositories.BudgetRepository;
 import com.lanu.homebudget.services.CategoryService;
 import com.lanu.homebudget.services.SubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class UserServiceImpl implements UserService{
     private UserRepository userRepository;
 
     @Autowired
+    private BudgetRepository budgetRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -34,14 +39,17 @@ public class UserServiceImpl implements UserService{
             throw new UserAlreadyExistsException("User " + user.getUsername() + " already exists");
         }
 
+        Budget budget = budgetRepository.save(new Budget(null, "Start budget"));
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(Arrays.asList(new Role((long) 1, "USER")));
         user.setActive(true);
+        user.addBudget(budget);
         User theUser = userRepository.save(user);
 
         Category categoryTransfer = categoryService
-                .createCategory(user, new Category(
-                null, "Transfer", Transaction.TransactionType.TRANSFER, theUser));
+                .createCategory(budget.getId(), new Category(
+                null, "Transfer", Transaction.TransactionType.TRANSFER, budget));
         SubCategory subCategoryOut = subCategoryService
                 .createSubCategory(categoryTransfer.getId(), new SubCategory(
                 null, "Out", null));

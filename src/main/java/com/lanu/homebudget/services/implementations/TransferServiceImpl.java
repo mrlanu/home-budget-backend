@@ -4,6 +4,7 @@ import com.lanu.homebudget.entities.Account;
 import com.lanu.homebudget.entities.Transaction;
 import com.lanu.homebudget.entities.Transfer;
 import com.lanu.homebudget.exceptions.ResourceNotFoundException;
+import com.lanu.homebudget.repositories.BudgetRepository;
 import com.lanu.homebudget.repositories.TransferRepository;
 import com.lanu.homebudget.security.User;
 import com.lanu.homebudget.services.AccountService;
@@ -26,6 +27,9 @@ public class TransferServiceImpl implements TransferService {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private BudgetRepository budgetRepository;
+
     @Override
     public Transfer getTransferById(Long transferId) {
         return transferRepository.findById(transferId)
@@ -33,7 +37,7 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
-    public Transfer createTransfer(User user, Transfer transfer) {
+    public Transfer createTransfer(Long budgetId, Transfer transfer) {
         transfer.setDate(transfer.getDate().minusHours(6));
         Account accFrom = accountService.findAccountById(transfer.getFromAccount().getId());
         Account accTo = accountService.findAccountById(transfer.getToAccount().getId());
@@ -43,7 +47,7 @@ public class TransferServiceImpl implements TransferService {
         accountService.saveAccount(accFrom);
         accountService.saveAccount(accTo);
 
-        transfer.setUser(user);
+        transfer.setBudget(budgetRepository.findById(budgetId).get());
 
         return transferRepository.save(transfer);
     }
@@ -103,12 +107,12 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
-    public List<Transfer> findAllByUserAndDateBetween(User user, Date date) {
+    public List<Transfer> findAllByBudgetIdAndDateBetween(Long budgetId, Date date) {
 
         LocalDateTime localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime localDateStart = localDate.withDayOfMonth(1);
         LocalDateTime localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
 
-        return transferRepository.findAllByUserAndDateBetween(user, localDateStart, localDateEnd);
+        return transferRepository.findAllByBudget_IdAndDateBetween(budgetId, localDateStart, localDateEnd);
     }
 }
