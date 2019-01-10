@@ -61,10 +61,9 @@ public class ChartServiceImpl implements ChartService {
     // the method checks passed Array if it has any missed month and fill them with the sum equal 0.0
     private YearMonthSum checkGapsInResultArray(YearMonthSum yearMonthSum){
 
-        YearMonth lastMonthInArray = yearMonthSum.getDate().get(yearMonthSum.getDate().size() -1);
-        YearMonth monthShouldBe = lastMonthInArray.minusYears(1).plusMonths(1);
+        YearMonth monthShouldBe = YearMonth.now().minusYears(1).plusMonths(1);
 
-        for (int i = 0; i < yearMonthSum.getDate().size(); i++){
+        for (int i = 0; i < 12; i++){
             YearMonth monthPresentInArray = yearMonthSum.getDate().get(i);
 
             if (monthPresentInArray.equals(monthShouldBe)){
@@ -73,9 +72,6 @@ public class ChartServiceImpl implements ChartService {
                 yearMonthSum.getDate().add(i, monthShouldBe);
                 yearMonthSum.getSum().add(i, 0.0);
                 monthShouldBe = monthShouldBe.plusMonths(1);
-            }
-            if (monthPresentInArray.equals(lastMonthInArray)){
-                break;
             }
         }
         return yearMonthSum;
