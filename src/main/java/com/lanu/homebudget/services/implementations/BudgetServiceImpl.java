@@ -22,6 +22,15 @@ public class BudgetServiceImpl implements BudgetService {
     private BudgetRepository budgetRepository;
 
     @Override
+    public Budget createBudget(User user, Budget budgetReq) {
+        Budget budget = budgetRepository.save(budgetReq);
+        User theUser = userService.findByUsername(user.getUsername()).get();
+        theUser.addBudget(budget);
+        userService.saveUser(theUser);
+        return budget;
+    }
+
+    @Override
     public List<User> getUsersByBudgetId(Long budgetId) {
         return budgetRepository.findById(budgetId).map(Budget::getUserList)
                 .orElseThrow(() -> new ResourceNotFoundException("BudgetId " + budgetId + " not found"));

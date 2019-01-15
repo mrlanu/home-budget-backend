@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService{
             throw new UserAlreadyExistsException("User " + user.getUsername() + " already exists");
         }
 
-        Budget budget = budgetRepository.save(new Budget(null, "Start budget", null));
+        Budget budget = budgetRepository.save(new Budget(null, "Initial", null));
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(Arrays.asList(new Role((long) 1, "USER")));
