@@ -36,4 +36,14 @@ public class BudgetServiceImpl implements BudgetService {
             return ResponseEntity.ok().build();
         }).orElseThrow(() -> new ResourceNotFoundException("Username " + userName + " not found"));
     }
+
+    @Override
+    public ResponseEntity<?> removeUserFromBudget(Long budgetId, String userName) {
+        return userService.findByUsername(userName).map(user -> {
+            Budget budget = budgetRepository.findById(budgetId).get();
+            user.getBudgets().remove(budget);
+            userService.saveUser(user);
+            return ResponseEntity.ok().build();
+        }).orElseThrow(() -> new ResourceNotFoundException("Username " + userName + " not found"));
+    }
 }

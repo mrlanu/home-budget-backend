@@ -9,4 +9,5 @@ public interface BudgetService {
 
     List<User> getUsersByBudgetId(Long budgetId);
     ResponseEntity<?> addUserToBudget(Long budgetId, String userName);
+    ResponseEntity<?> removeUserFromBudget(Long budgetId, String userName);
 }

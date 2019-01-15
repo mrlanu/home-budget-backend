@@ -25,7 +25,7 @@ public class User{
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinTable(name = "budget_user",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "budget_id"))
