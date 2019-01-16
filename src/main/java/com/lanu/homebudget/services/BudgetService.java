@@ -14,4 +14,5 @@ public interface BudgetService {
     ResponseEntity<?> removeUserFromBudget(Long budgetId, String userName);
     Budget createBudget(User user, Budget  budget);
     ResponseEntity<?> deleteBudget(Long budgetId);
+    Budget updateBudget(Budget budget);
 }

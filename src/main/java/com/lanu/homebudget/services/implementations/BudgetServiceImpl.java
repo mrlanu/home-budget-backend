@@ -31,6 +31,14 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     @Override
+    public Budget updateBudget(Budget requestBudget) {
+        return budgetRepository.findById(requestBudget.getId()).map(budget -> {
+            budget.setName(requestBudget.getName());
+            return budgetRepository.save(budget);
+        }).orElseThrow(() -> new ResourceNotFoundException("budgetId " + requestBudget.getId() + " not found"));
+    }
+
+    @Override
     public ResponseEntity<?> deleteBudget(Long budgetId) {
         return budgetRepository.findById(budgetId).map(budget -> {
             budgetRepository.delete(budget);

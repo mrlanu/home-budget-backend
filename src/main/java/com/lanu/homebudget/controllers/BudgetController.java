@@ -55,4 +55,9 @@ public class BudgetController {
     public ResponseEntity<?> deleteBudget(@PathVariable(value = "budgetId") Long budgetId){
         return budgetService.deleteBudget(budgetId);
     }
+
+    @PutMapping("/budgets")
+    public Budget updateBudget(@Valid @RequestBody Budget budget){
+        return budgetService.updateBudget(budget);
+    }
 }
