@@ -1,5 +1,6 @@
 package com.lanu.homebudget.services.implementations;
 
+import com.lanu.homebudget.entities.Account;
 import com.lanu.homebudget.entities.Budget;
 import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.repositories.BudgetRepository;
@@ -27,6 +28,14 @@ public class BudgetServiceImpl implements BudgetService {
         user.addBudget(budget);
         userService.saveUser(user);
         return budget;
+    }
+
+    @Override
+    public ResponseEntity<?> deleteBudget(Long budgetId) {
+        return budgetRepository.findById(budgetId).map(budget -> {
+            budgetRepository.delete(budget);
+            return ResponseEntity.ok().build();
+        }).orElseThrow(() -> new ResourceNotFoundException("budgetId " + budgetId + " not found"));
     }
 
     @Override

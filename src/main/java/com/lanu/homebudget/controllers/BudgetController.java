@@ -50,4 +50,9 @@ public class BudgetController {
                                                   @RequestParam(name = "userName")String userName){
         return budgetService.removeUserFromBudget(budgetId, userName);
     }
+
+    @DeleteMapping("/budgets/{budgetId}")
+    public ResponseEntity<?> deleteBudget(@PathVariable(value = "budgetId") Long budgetId){
+        return budgetService.deleteBudget(budgetId);
+    }
 }
