@@ -1,5 +1,6 @@
 package com.lanu.homebudget.security;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lanu.homebudget.entities.Budget;
 import lombok.*;
 
@@ -25,6 +26,7 @@ public class User{
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
 
+    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinTable(name = "budget_user",
             joinColumns = @JoinColumn(name = "user_id"),

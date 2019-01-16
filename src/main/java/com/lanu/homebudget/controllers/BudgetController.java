@@ -22,10 +22,15 @@ public class BudgetController {
     @Autowired
     private UserService userService;
 
+    @GetMapping("/budgets")
+    public List<Budget> getBudgetsByUser(Principal principal){
+        User user = userService.findByUsername(principal.getName()).get();
+        return budgetService.getBudgetByUser(user);
+    }
+
     @PostMapping("/budgets")
     public Budget createBudget(@Valid @RequestBody Budget budget, Principal principal){
-        User user = userService.findByUsername(principal.getName())
-                .orElseThrow(() -> new ResourceNotFoundException("UserName " + principal.getName() + " not found"));
+        User user = userService.findByUsername(principal.getName()).get();
         return budgetService.createBudget(user, budget);
     }
 

@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface BudgetService {
 
+    List<Budget> getBudgetByUser(User user);
     List<User> getUsersByBudgetId(Long budgetId);
     ResponseEntity<?> addUserToBudget(Long budgetId, String userName);
     ResponseEntity<?> removeUserFromBudget(Long budgetId, String userName);

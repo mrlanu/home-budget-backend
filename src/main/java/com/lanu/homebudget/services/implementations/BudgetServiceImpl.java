@@ -24,10 +24,14 @@ public class BudgetServiceImpl implements BudgetService {
     @Override
     public Budget createBudget(User user, Budget budgetReq) {
         Budget budget = budgetRepository.save(budgetReq);
-        User theUser = userService.findByUsername(user.getUsername()).get();
-        theUser.addBudget(budget);
-        userService.saveUser(theUser);
+        user.addBudget(budget);
+        userService.saveUser(user);
         return budget;
+    }
+
+    @Override
+    public List<Budget> getBudgetByUser(User user) {
+        return user.getBudgets();
     }
 
     @Override
