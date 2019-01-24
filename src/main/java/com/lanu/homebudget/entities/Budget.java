@@ -21,6 +21,8 @@ public class Budget {
 
     private String name;
 
+    private String ownerUsername;
+
     @JsonBackReference
     @ManyToMany
     @JoinTable(name = "budget_user",
