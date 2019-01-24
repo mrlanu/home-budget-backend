@@ -24,6 +24,7 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     public Budget createBudget(User user, Budget budgetReq) {
+        budgetReq.setOwnerUsername(user.getUsername());
         Budget budget = budgetRepository.save(budgetReq);
         user.addBudget(budget);
         userService.saveUser(user);
