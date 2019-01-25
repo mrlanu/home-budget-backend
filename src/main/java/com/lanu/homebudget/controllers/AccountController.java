@@ -32,10 +32,9 @@ public class AccountController {
         return accountService.createAccount(budgetId, account);
     }
 
-    @PutMapping("/{accountId}")
-    public Account updateAccount(@PathVariable (value = "accountId") Long accountId,
-                               @Valid @RequestBody Account accountRequest) {
-        return accountService.updateAccount(accountId, accountRequest);
+    @PutMapping
+    public Account updateAccount(@Valid @RequestBody Account accountRequest) {
+        return accountService.editAccount(accountRequest);
     }
 
     @DeleteMapping("/{accountId}")

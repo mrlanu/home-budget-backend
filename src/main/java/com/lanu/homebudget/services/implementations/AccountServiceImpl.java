@@ -29,7 +29,24 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account createAccount(Long budgetId, Account account) {
         account.setBudget(budgetRepository.findById(budgetId).get());
+        account.setBalance(account.getInitialBalance());
         return accountRepository.save(account);
+    }
+
+    @Override
+    public Account editAccount(Account accountRequest) {
+        return accountRepository.findById(accountRequest.getId()).map(account -> {
+
+            double newBalance = account.getBalance() - account.getInitialBalance() + accountRequest.getInitialBalance();
+
+            account.setBalance(newBalance);
+            account.setInitialBalance(accountRequest.getInitialBalance());
+            account.setType(accountRequest.getType());
+            account.setName(accountRequest.getName());
+            account.setCurrency(accountRequest.getCurrency());
+            account.setIncludeInTotal(accountRequest.isIncludeInTotal());
+            return accountRepository.save(account);
+        }).orElseThrow(() -> new ResourceNotFoundException("AccountId " + accountRequest.getId() + "not found"));
     }
 
     @Override
@@ -40,17 +57,6 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account findAccountById(Long accountId) {
         return accountRepository.findById(accountId).orElseThrow(() -> new ResourceNotFoundException("AccountId " + accountId + " not found"));
-    }
-
-    @Override
-    public Account updateAccount(Long accountId, Account requestAccount) {
-        return accountRepository.findById(accountId).map(account -> {
-            account.setName(requestAccount.getName());
-            account.setBalance(requestAccount.getBalance());
-            account.setCurrency(requestAccount.getCurrency());
-            account.setIncludeInTotal(requestAccount.isIncludeInTotal());
-            return accountRepository.save(account);
-        }).orElseThrow(() -> new ResourceNotFoundException("AccountId " + accountId + "not found"));
     }
 
     @Override
