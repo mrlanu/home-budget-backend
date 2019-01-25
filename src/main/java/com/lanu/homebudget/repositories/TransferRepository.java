@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TransferRepository extends JpaRepository<Transfer, Long> {
-    /*List<Transfer> findAllByUserAndDateBetween(User user, LocalDateTime start, LocalDateTime end);*/
 
     List<Transfer> findAllByBudget_IdAndDateBetween(Long budgetId, LocalDateTime start, LocalDateTime end);
 }

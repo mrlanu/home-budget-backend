@@ -9,16 +9,11 @@ import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
-    /*List<Transaction> findAllByUser(User user);
-    List<Transaction> findAllByUserAndDateBetween(User user, LocalDateTime start, LocalDateTime end);
-    List<Transaction> findAllByUserAndDateBetweenAndType(User user,
-                                                         LocalDateTime start, LocalDateTime end,
-                                                         Transaction.TransactionType transactionType);*/
-
     List<Transaction> findAllByCategory_IdAndDateBetween(Long categoryId, LocalDateTime start, LocalDateTime end);
     List<Transaction> findAllByBudget_IdAndDateBetween(Long budgetId, LocalDateTime start, LocalDateTime end);
     List<Transaction> findAllByBudget_IdAndDateBetweenAndType(Long budgetId,
                                                          LocalDateTime start, LocalDateTime end,
                                                          Transaction.TransactionType transactionType);
+    Transaction findFirstByAccount_Id(Long accId);
 
 }

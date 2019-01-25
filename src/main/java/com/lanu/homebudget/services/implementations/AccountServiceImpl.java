@@ -4,6 +4,7 @@ import com.lanu.homebudget.entities.Account;
 import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.repositories.AccountRepository;
 import com.lanu.homebudget.repositories.BudgetRepository;
+import com.lanu.homebudget.repositories.TransactionRepository;
 import com.lanu.homebudget.security.User;
 import com.lanu.homebudget.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private BudgetRepository budgetRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     @Override
     public Account saveAccount(Account account) {
@@ -61,9 +65,16 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public ResponseEntity<?> deleteAccount(Long accountId) {
+        if (hasAccountAnyTransactions(accountId)){
+            return ResponseEntity.unprocessableEntity().build();
+        }
         return accountRepository.findById(accountId).map(account -> {
             accountRepository.delete(account);
             return ResponseEntity.ok().build();
         }).orElseThrow(() -> new ResourceNotFoundException("AccountId " + accountId + " not found"));
+    }
+
+    private boolean hasAccountAnyTransactions(Long accId){
+        return transactionRepository.findFirstByAccount_Id(accId) != null;
     }
 }
