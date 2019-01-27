@@ -1,21 +1,29 @@
 package com.lanu.homebudget.services.implementations;
 
 import com.lanu.homebudget.entities.Category;
+import com.lanu.homebudget.entities.SubCategory;
 import com.lanu.homebudget.repositories.BudgetRepository;
 import com.lanu.homebudget.repositories.CategoryRepository;
-import com.lanu.homebudget.security.User;
+import com.lanu.homebudget.repositories.SubCategoryRepository;
 import com.lanu.homebudget.services.CategoryService;
+import com.lanu.homebudget.views.ListSubcategoryByCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private SubCategoryRepository subCategoryRepository;
 
     @Autowired
     private BudgetRepository budgetRepository;
@@ -38,5 +46,15 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category findByBudgetIdAndName(Long budgetId, String categoryName) {
         return categoryRepository.findByBudget_IdAndName(budgetId, categoryName);
+    }
+
+    @Override
+    public List<ListSubcategoryByCategory> getGroupedSubCategoryByCategory(Long budgetId){
+        List<ListSubcategoryByCategory> result = new ArrayList<>();
+        List<SubCategory> subCategoryList = subCategoryRepository.findAllByBudgetId(budgetId);
+        Map<Category, List<SubCategory>> map = subCategoryList.stream()
+                .collect(Collectors.groupingBy(SubCategory::getCategory));
+        map.forEach((k, v) -> result.add(new ListSubcategoryByCategory(k.getId(), k.getName(), v)));
+        return result;
     }
 }

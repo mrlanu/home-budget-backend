@@ -52,10 +52,10 @@ public class UserServiceImpl implements UserService{
                 null, "Transfer", Transaction.TransactionType.TRANSFER, budget));
         SubCategory subCategoryOut = subCategoryService
                 .createSubCategory(categoryTransfer.getId(), new SubCategory(
-                null, "Out", null));
+                null, "Out", null, budget.getId()), budget.getId());
         SubCategory subCategoryIn = subCategoryService
                 .createSubCategory(categoryTransfer.getId(), new SubCategory(
-                        null, "In", null));
+                        null, "In", null, budget.getId()), budget.getId());
 
         return theUser;
     }

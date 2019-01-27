@@ -1,6 +1,7 @@
 package com.lanu.homebudget.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lanu.homebudget.entities.Budget;
 import lombok.*;
 
@@ -21,6 +22,8 @@ public class User{
     private Long userId;
 
     private String username;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
