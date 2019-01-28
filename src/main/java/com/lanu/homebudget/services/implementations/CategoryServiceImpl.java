@@ -2,6 +2,7 @@ package com.lanu.homebudget.services.implementations;
 
 import com.lanu.homebudget.entities.Category;
 import com.lanu.homebudget.entities.SubCategory;
+import com.lanu.homebudget.entities.Transaction;
 import com.lanu.homebudget.repositories.BudgetRepository;
 import com.lanu.homebudget.repositories.CategoryRepository;
 import com.lanu.homebudget.repositories.SubCategoryRepository;
@@ -35,7 +36,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public List<Category> findCategoriesByBudgetId(Long budgetId) {
-        return categoryRepository.findAllByBudget_Id(budgetId);
+        return categoryRepository.findAllByBudget_Id(budgetId)
+                .stream()
+                .filter(category -> category.getType() != Transaction.TransactionType.TRANSFER)
+                .collect(Collectors.toList());
     }
 
     @Override
