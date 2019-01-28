@@ -5,6 +5,7 @@ import com.lanu.homebudget.security.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,10 +23,9 @@ public class Category {
     @Enumerated(EnumType.STRING)
     private Transaction.TransactionType type;
 
-    /*@OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
-    @JsonIgnore
-    private List<SubCategory> subCategoryList;*/
+    private List<SubCategory> subCategoryList;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "budget_id")

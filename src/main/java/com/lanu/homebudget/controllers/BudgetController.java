@@ -1,7 +1,6 @@
 package com.lanu.homebudget.controllers;
 
 import com.lanu.homebudget.entities.Budget;
-import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.security.User;
 import com.lanu.homebudget.security.UserService;
 import com.lanu.homebudget.services.BudgetService;

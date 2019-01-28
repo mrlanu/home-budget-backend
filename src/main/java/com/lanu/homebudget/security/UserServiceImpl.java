@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -49,13 +50,13 @@ public class UserServiceImpl implements UserService{
 
         Category categoryTransfer = categoryService
                 .createCategory(budget.getId(), new Category(
-                null, "Transfer", Transaction.TransactionType.TRANSFER, budget));
+                null, "Transfer", Transaction.TransactionType.TRANSFER, new ArrayList<>(), budget));
         SubCategory subCategoryOut = subCategoryService
                 .createSubCategory(categoryTransfer.getId(), new SubCategory(
-                null, "Out", null, budget.getId()), budget.getId());
+                        null, "Out", null));
         SubCategory subCategoryIn = subCategoryService
                 .createSubCategory(categoryTransfer.getId(), new SubCategory(
-                        null, "In", null, budget.getId()), budget.getId());
+                        null, "In", null));
 
         return theUser;
     }

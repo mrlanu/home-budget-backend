@@ -1,5 +1,6 @@
 package com.lanu.homebudget.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,9 +24,6 @@ public class SubCategory {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonBackReference
     private Category category;
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Long budgetId;
 }

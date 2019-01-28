@@ -14,5 +14,4 @@ public interface CategoryService {
     List<Category> findCategoriesByBudgetId(Long budgetId);
     Optional<Category> findById(Long id);
     Category findByBudgetIdAndName(Long budgetId, String categoryName);
-    List<ListSubcategoryByCategory> getGroupedSubCategoryByCategory(Long budgetId);
 }

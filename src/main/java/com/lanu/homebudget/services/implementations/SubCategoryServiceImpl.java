@@ -21,10 +21,9 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     private CategoryService categoryService;
 
     @Override
-    public SubCategory createSubCategory(Long categoryId, SubCategory subCategory, Long budgetId) {
+    public SubCategory createSubCategory(Long categoryId, SubCategory subCategory) {
         return categoryService.findById(categoryId).map(category -> {
             subCategory.setCategory(category);
-            subCategory.setBudgetId(budgetId);
             return subCategoryRepository.save(subCategory);
         }).orElseThrow(() -> new ResourceNotFoundException("CategoryId " + categoryId + " not found"));
     }

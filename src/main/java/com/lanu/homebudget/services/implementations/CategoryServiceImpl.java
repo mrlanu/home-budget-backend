@@ -47,14 +47,4 @@ public class CategoryServiceImpl implements CategoryService {
     public Category findByBudgetIdAndName(Long budgetId, String categoryName) {
         return categoryRepository.findByBudget_IdAndName(budgetId, categoryName);
     }
-
-    @Override
-    public List<ListSubcategoryByCategory> getGroupedSubCategoryByCategory(Long budgetId){
-        List<ListSubcategoryByCategory> result = new ArrayList<>();
-        List<SubCategory> subCategoryList = subCategoryRepository.findAllByBudgetId(budgetId);
-        Map<Category, List<SubCategory>> map = subCategoryList.stream()
-                .collect(Collectors.groupingBy(SubCategory::getCategory));
-        map.forEach((k, v) -> result.add(new ListSubcategoryByCategory(k.getId(), k.getName(), v)));
-        return result;
-    }
 }

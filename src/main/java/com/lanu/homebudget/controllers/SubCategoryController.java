@@ -16,9 +16,8 @@ public class SubCategoryController {
 
     @PostMapping("/categories/{categoryId}/subcategories")
     public SubCategory createSubCategory(@PathVariable(value = "categoryId") Long categoryId,
-                                         @RequestParam(name = "budgetId") Long budgetId,
                                          @Valid @RequestBody SubCategory subCategory){
-        return subCategoryService.createSubCategory(categoryId, subCategory, budgetId);
+        return subCategoryService.createSubCategory(categoryId, subCategory);
     }
 
     @GetMapping("/categories/{categoryId}/subcategories")
