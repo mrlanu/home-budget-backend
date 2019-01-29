@@ -8,9 +8,11 @@ import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.repositories.BudgetRepository;
 import com.lanu.homebudget.repositories.CategoryRepository;
 import com.lanu.homebudget.repositories.SubCategoryRepository;
+import com.lanu.homebudget.repositories.TransactionRepository;
 import com.lanu.homebudget.services.CategoryService;
 import com.lanu.homebudget.views.ListSubcategoryByCategory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
 
     @Autowired
-    private SubCategoryRepository subCategoryRepository;
+    private TransactionRepository transactionRepository;
 
     @Autowired
     private BudgetRepository budgetRepository;
@@ -44,6 +46,22 @@ public class CategoryServiceImpl implements CategoryService {
             category.setName(categoryRequest.getName());
             return categoryRepository.save(category);
         }).orElseThrow(() -> new ResourceNotFoundException("CategoryId " + categoryRequest.getId() + "not found"));
+    }
+
+    @Override
+    public ResponseEntity<?> deleteCategory(Long categoryId) {
+        if (hasCategoryAnyTransactions(categoryId)){
+            return ResponseEntity.unprocessableEntity().build();
+        }
+        return categoryRepository.findById(categoryId).map(category -> {
+            categoryRepository.delete(category);
+            return ResponseEntity.ok().build();
+        }).orElseThrow(() -> new ResourceNotFoundException("categoryId " + categoryId + " not found"));
+    }
+
+    private boolean hasCategoryAnyTransactions(Long categoryId){
+        Transaction transaction = transactionRepository.findFirstByCategory_Id(categoryId);
+        return transactionRepository.findFirstByCategory_Id(categoryId) != null;
     }
 
     public List<Category> findCategoriesByBudgetId(Long budgetId) {

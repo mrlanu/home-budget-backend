@@ -1,9 +1,9 @@
 package com.lanu.homebudget.controllers;
 
-import com.lanu.homebudget.entities.Account;
 import com.lanu.homebudget.entities.Category;
 import com.lanu.homebudget.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,5 +28,10 @@ public class CategoryController {
     @PutMapping("/categories")
     public Category updateCategory(@Valid @RequestBody Category categoryRequest) {
         return categoryService.editCategory(categoryRequest);
+    }
+
+    @DeleteMapping("/categories/{categoryId}")
+    public ResponseEntity<?> deleteCategory(@PathVariable (value = "categoryId") Long categoryId) {
+        return categoryService.deleteCategory(categoryId);
     }
 }
