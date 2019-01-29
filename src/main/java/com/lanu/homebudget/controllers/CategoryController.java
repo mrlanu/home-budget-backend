@@ -1,5 +1,6 @@
 package com.lanu.homebudget.controllers;
 
+import com.lanu.homebudget.entities.Account;
 import com.lanu.homebudget.entities.Category;
 import com.lanu.homebudget.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,5 +23,10 @@ public class CategoryController {
     @GetMapping("/categories")
     public List<Category> getAllCategories(@RequestParam(name = "budgetId") Long budgetId){
         return categoryService.findCategoriesByBudgetId(budgetId);
+    }
+
+    @PutMapping("/categories")
+    public Category updateCategory(@Valid @RequestBody Category categoryRequest) {
+        return categoryService.editCategory(categoryRequest);
     }
 }

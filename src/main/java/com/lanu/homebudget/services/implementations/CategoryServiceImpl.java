@@ -1,8 +1,10 @@
 package com.lanu.homebudget.services.implementations;
 
+import com.lanu.homebudget.entities.Account;
 import com.lanu.homebudget.entities.Category;
 import com.lanu.homebudget.entities.SubCategory;
 import com.lanu.homebudget.entities.Transaction;
+import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.repositories.BudgetRepository;
 import com.lanu.homebudget.repositories.CategoryRepository;
 import com.lanu.homebudget.repositories.SubCategoryRepository;
@@ -33,6 +35,15 @@ public class CategoryServiceImpl implements CategoryService {
     public Category createCategory(Long budgetId, Category category) {
         category.setBudget(budgetRepository.findById(budgetId).get());
         return categoryRepository.save(category);
+    }
+
+    @Override
+    public Category editCategory(Category categoryRequest) {
+        return categoryRepository.findById(categoryRequest.getId()).map(category -> {
+            category.setType(categoryRequest.getType());
+            category.setName(categoryRequest.getName());
+            return categoryRepository.save(category);
+        }).orElseThrow(() -> new ResourceNotFoundException("CategoryId " + categoryRequest.getId() + "not found"));
     }
 
     public List<Category> findCategoriesByBudgetId(Long budgetId) {
