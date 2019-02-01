@@ -60,7 +60,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private boolean hasCategoryAnyTransactions(Long categoryId){
-        Transaction transaction = transactionRepository.findFirstByCategory_Id(categoryId);
         return transactionRepository.findFirstByCategory_Id(categoryId) != null;
     }
 

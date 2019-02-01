@@ -3,6 +3,7 @@ package com.lanu.homebudget.controllers;
 import com.lanu.homebudget.entities.SubCategory;
 import com.lanu.homebudget.services.SubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,5 +24,10 @@ public class SubCategoryController {
     @GetMapping("/categories/{categoryId}/subcategories")
     public List<SubCategory> getAllSubCategoriesByCategoryId(@PathVariable(value = "categoryId") Long categoryId){
         return subCategoryService.findAllByCategory_Id(categoryId);
+    }
+
+    @DeleteMapping("/subcategories/{subCategoryId}")
+    public ResponseEntity<?> deleteSubCategory(@PathVariable (value = "subCategoryId") Long subCategoryId) {
+        return subCategoryService.deleteSubCategory(subCategoryId);
     }
 }

@@ -16,5 +16,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                                                          Transaction.TransactionType transactionType);
     Transaction findFirstByAccount_Id(Long accId);
     Transaction findFirstByCategory_Id(Long categoryId);
+    Transaction findFirstBySubCategory_Id(Long subCategoryId);
 
 }
