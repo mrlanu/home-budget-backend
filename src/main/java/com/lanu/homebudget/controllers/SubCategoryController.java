@@ -26,6 +26,11 @@ public class SubCategoryController {
         return subCategoryService.findAllByCategory_Id(categoryId);
     }
 
+    @PutMapping("/subcategories")
+    public SubCategory updateSubCategory(@Valid @RequestBody SubCategory subCategoryRequest) {
+        return subCategoryService.editSubCategory(subCategoryRequest);
+    }
+
     @DeleteMapping("/subcategories/{subCategoryId}")
     public ResponseEntity<?> deleteSubCategory(@PathVariable (value = "subCategoryId") Long subCategoryId) {
         return subCategoryService.deleteSubCategory(subCategoryId);

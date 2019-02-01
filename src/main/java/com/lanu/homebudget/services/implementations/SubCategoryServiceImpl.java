@@ -2,7 +2,6 @@ package com.lanu.homebudget.services.implementations;
 
 import com.lanu.homebudget.entities.Category;
 import com.lanu.homebudget.entities.SubCategory;
-import com.lanu.homebudget.entities.Transaction;
 import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.repositories.SubCategoryRepository;
 import com.lanu.homebudget.repositories.TransactionRepository;
@@ -32,6 +31,14 @@ public class SubCategoryServiceImpl implements SubCategoryService {
             subCategory.setCategory(category);
             return subCategoryRepository.save(subCategory);
         }).orElseThrow(() -> new ResourceNotFoundException("CategoryId " + categoryId + " not found"));
+    }
+
+    @Override
+    public SubCategory editSubCategory(SubCategory subCategoryRequest) {
+        return subCategoryRepository.findById(subCategoryRequest.getId()).map(subcategory -> {
+            subcategory.setName(subCategoryRequest.getName());
+            return subCategoryRepository.save(subcategory);
+        }).orElseThrow(() -> new ResourceNotFoundException("SubCategoryId " + subCategoryRequest.getId() + "not found"));
     }
 
     @Override

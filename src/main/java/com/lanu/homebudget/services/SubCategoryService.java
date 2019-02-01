@@ -12,5 +12,6 @@ public interface SubCategoryService {
 
     List<SubCategory> findAllByCategory_Id(Long categoryId);
     SubCategory findByCategoryAndName(Category category, String name);
+    SubCategory editSubCategory(SubCategory subCategoryRequest);
     ResponseEntity<?> deleteSubCategory(Long subCategoryId);
 }
