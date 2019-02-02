@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService{
         Budget budget = budgetRepository.save(new Budget(null, "Initial", user.getUsername(), null));
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(Arrays.asList(new Role((long) 1, "USER")));
+        // user.setRoles(Arrays.asList(new Role((long) 1, "USER")));
         user.setActive(true);
         user.addBudget(budget);
         User theUser = userRepository.save(user);

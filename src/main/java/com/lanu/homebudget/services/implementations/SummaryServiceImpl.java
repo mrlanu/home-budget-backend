@@ -33,8 +33,8 @@ public class SummaryServiceImpl implements SummaryService {
     public List<Group> getSummaryByCategory(Long budgetId, Date date, Transaction.TransactionType type) {
 
         LocalDateTime localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-        LocalDateTime localDateStart = localDate.withDayOfMonth(1);
-        LocalDateTime localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
+        LocalDateTime localDateStart = localDate.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1).withHour(23).withMinute(59).withSecond(59);
 
         List<Group> result = new ArrayList<>();
 
@@ -105,8 +105,8 @@ public class SummaryServiceImpl implements SummaryService {
         double accountsTotal;
 
         LocalDateTime localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-        LocalDateTime localDateStart = localDate.withDayOfMonth(1);
-        LocalDateTime localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
+        LocalDateTime localDateStart = localDate.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime localDateEnd = localDate.plusMonths(1).withDayOfMonth(1).minusDays(1).withHour(23).withMinute(59).withSecond(59);
 
         List<Transaction> transactionList = transactionRepository
                 .findAllByBudget_IdAndDateBetween(budgetId, localDateStart, localDateEnd);

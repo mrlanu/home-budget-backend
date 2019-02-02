@@ -25,8 +25,8 @@ public class ChartServiceImpl implements ChartService {
     public List<YearMonthSum> getSumsOfIncomesExpensesForYearByMonth(Long budgetId) {
 
         LocalDateTime today = LocalDateTime.now();
-        LocalDateTime dateEnd = today.withDayOfMonth(1).plusMonths(1).minusDays(1);
-        LocalDateTime dateStart = dateEnd.minusYears(1).plusDays(1);
+        LocalDateTime dateEnd = today.withDayOfMonth(1).plusMonths(1).minusDays(1).withHour(23).withMinute(59).withSecond(59);
+        LocalDateTime dateStart = dateEnd.minusYears(1).plusDays(1).withHour(0).withMinute(0).withSecond(0);
 
         List<YearMonthSum> result = new ArrayList<>();
         YearMonthSum resultIncomes = new YearMonthSum(new ArrayList<>(), new ArrayList<>());
@@ -80,8 +80,8 @@ public class ChartServiceImpl implements ChartService {
     public YearMonthSum getSumsByCategoryAndMonth(Long transactionId) {
 
         LocalDateTime today = LocalDateTime.now();
-        LocalDateTime dateEnd = today.withDayOfMonth(1).plusMonths(1).minusDays(1);
-        LocalDateTime dateStart = dateEnd.minusYears(1).plusDays(1);
+        LocalDateTime dateEnd = today.withDayOfMonth(1).plusMonths(1).minusDays(1).withHour(23).withMinute(59).withSecond(59);
+        LocalDateTime dateStart = dateEnd.minusYears(1).plusDays(1).withHour(0).withMinute(0).withSecond(0);
 
         YearMonthSum result = new YearMonthSum(new ArrayList<>(), new ArrayList<>());
 
