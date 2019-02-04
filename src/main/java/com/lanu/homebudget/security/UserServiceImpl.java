@@ -1,11 +1,9 @@
 package com.lanu.homebudget.security;
 
-import com.lanu.homebudget.entities.Budget;
-import com.lanu.homebudget.entities.Category;
-import com.lanu.homebudget.entities.SubCategory;
-import com.lanu.homebudget.entities.Transaction;
+import com.lanu.homebudget.entities.*;
 import com.lanu.homebudget.exceptions.UserAlreadyExistsException;
 import com.lanu.homebudget.repositories.BudgetRepository;
+import com.lanu.homebudget.services.AccountService;
 import com.lanu.homebudget.services.CategoryService;
 import com.lanu.homebudget.services.SubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -34,6 +31,9 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private SubCategoryService subCategoryService;
 
+    @Autowired
+    private AccountService accountService;
+
     @Override
     public User createUser(User user){
         if (existByUsername(user.getUsername())){
@@ -48,9 +48,15 @@ public class UserServiceImpl implements UserService{
         user.addBudget(budget);
         User theUser = userRepository.save(user);
 
+        createInitCategoriesAndAccounts(budget);
+
+        return theUser;
+    }
+
+    private void createInitCategoriesAndAccounts(Budget budget){
         Category categoryTransfer = categoryService
                 .createCategory(budget.getId(), new Category(
-                null, "Transfer", Transaction.TransactionType.TRANSFER, new ArrayList<>(), budget));
+                        null, "Transfer", Transaction.TransactionType.TRANSFER, new ArrayList<>(), budget));
         SubCategory subCategoryOut = subCategoryService
                 .createSubCategory(categoryTransfer.getId(), new SubCategory(
                         null, "Out", null));
@@ -58,7 +64,49 @@ public class UserServiceImpl implements UserService{
                 .createSubCategory(categoryTransfer.getId(), new SubCategory(
                         null, "In", null));
 
-        return theUser;
+
+        Category categoryFood = categoryService
+                .createCategory(budget.getId(), new Category(null, "Food", Transaction.TransactionType.EXPENSE, new ArrayList<>(), budget));
+        SubCategory subCategoryFoodRestaurant = subCategoryService
+                .createSubCategory(categoryFood.getId(), new SubCategory(
+                        null, "Restaurant", null));
+        SubCategory subCategoryFoodCoffee = subCategoryService
+                .createSubCategory(categoryFood.getId(), new SubCategory(
+                        null, "Coffee", null));
+
+        Category categoryFun = categoryService
+                .createCategory(budget.getId(), new Category(null, "Fun", Transaction.TransactionType.EXPENSE, new ArrayList<>(), budget));
+        SubCategory subCategoryFun = subCategoryService
+                .createSubCategory(categoryFun.getId(), new SubCategory(
+                        null, "Entertainment", null));
+
+        Category categoryOther = categoryService
+                .createCategory(budget.getId(), new Category(null, "Other", Transaction.TransactionType.EXPENSE, new ArrayList<>(), budget));
+        SubCategory subCategoryOther = subCategoryService
+                .createSubCategory(categoryOther.getId(), new SubCategory(
+                        null, "Uber", null));
+
+        Category categorySalary = categoryService
+                .createCategory(budget.getId(), new Category(null, "Salary", Transaction.TransactionType.INCOME, new ArrayList<>(), budget));
+        SubCategory subCategorySalaryJohn = subCategoryService
+                .createSubCategory(categorySalary.getId(), new SubCategory(
+                        null, "John", null));
+
+        Category categoryInvestment = categoryService
+                .createCategory(budget.getId(), new Category(null, "Investment", Transaction.TransactionType.INCOME, new ArrayList<>(), budget));
+        SubCategory subCategorySalaryInvestmentStocks = subCategoryService
+                .createSubCategory(categoryInvestment.getId(), new SubCategory(
+                        null, "Dividend Stocks", null));
+
+        Account initAccChase = accountService.createAccount(
+                budget.getId(),
+                new Account(null, "Chase", "Checking", "USD", 0.0, 0.0, true, budget)
+        );
+
+        Account initAccCash = accountService.createAccount(
+                budget.getId(),
+                new Account(null, "My wallet", "Cash", "USD", 0.0, 0.0, true, budget)
+        );
     }
 
     @Override

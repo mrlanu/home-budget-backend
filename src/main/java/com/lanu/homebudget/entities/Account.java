@@ -2,9 +2,7 @@ package com.lanu.homebudget.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lanu.homebudget.security.User;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -12,6 +10,8 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Account {
 
     @Id
