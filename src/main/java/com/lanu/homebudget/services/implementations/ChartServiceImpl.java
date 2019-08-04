@@ -19,18 +19,17 @@ import java.util.stream.Collectors;
 @Service
 public class ChartServiceImpl implements ChartService {
 
+    private LocalDateTime today = LocalDateTime.now();
+    private LocalDateTime dateEnd = today.withDayOfMonth(1).plusMonths(1).minusDays(1).withHour(23).withMinute(59).withSecond(59);
+    private LocalDateTime dateStart = dateEnd.minusYears(1).plusDays(1).withHour(0).withMinute(0).withSecond(0);
+    private YearMonth start = YearMonth.of(dateStart.getYear(), dateStart.getMonthValue());
+
     @Autowired
     private TransactionRepository transactionRepository;
 
     public List<YearMonthSum> getSumsOfIncomesExpensesForYearByMonth(Long budgetId) {
 
-        LocalDateTime today = LocalDateTime.now();
-        LocalDateTime dateEnd = today.withDayOfMonth(1).plusMonths(1).minusDays(1).withHour(23).withMinute(59).withSecond(59);
-        LocalDateTime dateStart = dateEnd.minusYears(1).plusDays(1).withHour(0).withMinute(0).withSecond(0);
-
         List<YearMonthSum> result = new ArrayList<>();
-        YearMonthSum resultIncomes = new YearMonthSum(new ArrayList<>(), new ArrayList<>());
-        YearMonthSum resultExspenses = new YearMonthSum(new ArrayList<>(), new ArrayList<>());
 
         List<Transaction> transactionList = transactionRepository
                 .findAllByBudget_IdAndDateBetween(budgetId, dateStart, dateEnd);
@@ -42,48 +41,20 @@ public class ChartServiceImpl implements ChartService {
                         Collectors.groupingBy(e -> YearMonth.of(e.getDate().getYear(), e.getDate().getMonth().getValue()),
                                 Collectors.summingDouble(Transaction::getAmount))));
 
-        fillYearMonthSum(resultIncomes, yearMonthDoubleMap.get(Transaction.TransactionType.INCOME));
-        fillYearMonthSum(resultExspenses, yearMonthDoubleMap.get(Transaction.TransactionType.EXPENSE));
-
-        result.add(checkGapsInResultArray(resultIncomes));
-        result.add(checkGapsInResultArray(resultExspenses));
+        for (int i = 0; i <= 11; i++) {
+            YearMonthSum y = new YearMonthSum(YearMonth.of(start.getYear(), start.getMonthValue()).plusMonths(i), 0.0, 0.0);
+            y.setExpenseSum(yearMonthDoubleMap.get(Transaction.TransactionType.EXPENSE).getOrDefault(y.getDate(), 0.0));
+            y.setIncomeSum(yearMonthDoubleMap.get(Transaction.TransactionType.INCOME).getOrDefault(y.getDate(), 0.0));
+            result.add(y);
+        }
 
         return result;
     }
 
-    private void fillYearMonthSum(YearMonthSum yearMonthSum, Map<YearMonth, Double> map){
-        map.forEach((k, v) -> {
-            yearMonthSum.getDate().add(k);
-            yearMonthSum.getSum().add(v < 0 ? v * -1 : v);
-        });
-    }
 
-    // the method checks passed Array if it has any missed month and fill them with the sum equal 0.0
-    private YearMonthSum checkGapsInResultArray(YearMonthSum yearMonthSum){
+    public List<YearMonthSum> getSumsByCategoryAndMonth(Long transactionId) {
 
-        YearMonth monthShouldBe = YearMonth.now().minusYears(1).plusMonths(1);
-
-        for (int i = 0; i < 12; i++){
-            YearMonth monthPresentInArray = yearMonthSum.getDate().get(i);
-
-            if (monthPresentInArray.equals(monthShouldBe)){
-                monthShouldBe = monthShouldBe.plusMonths(1);
-            } else {
-                yearMonthSum.getDate().add(i, monthShouldBe);
-                yearMonthSum.getSum().add(i, 0.0);
-                monthShouldBe = monthShouldBe.plusMonths(1);
-            }
-        }
-        return yearMonthSum;
-    }
-
-    public YearMonthSum getSumsByCategoryAndMonth(Long transactionId) {
-
-        LocalDateTime today = LocalDateTime.now();
-        LocalDateTime dateEnd = today.withDayOfMonth(1).plusMonths(1).minusDays(1).withHour(23).withMinute(59).withSecond(59);
-        LocalDateTime dateStart = dateEnd.minusYears(1).plusDays(1).withHour(0).withMinute(0).withSecond(0);
-
-        YearMonthSum result = new YearMonthSum(new ArrayList<>(), new ArrayList<>());
+        List<YearMonthSum> result = new ArrayList<>();
 
         List<Transaction> transactionList = transactionRepository
                 .findAllByCategory_IdAndDateBetween(transactionId, dateStart, dateEnd);
@@ -94,11 +65,12 @@ public class ChartServiceImpl implements ChartService {
                         .groupingBy(e -> YearMonth.of(e.getDate().getYear(), e.getDate().getMonth().getValue()),
                                 Collectors.summingDouble(Transaction::getAmount)));
 
-        yearMonthDoubleMap.forEach((k, v) -> {
-            result.getDate().add(k);
-            result.getSum().add(v < 0 ? v * -1 : v);
-        });
+        for (int i = 0; i <= 11; i++) {
+            YearMonthSum y = new YearMonthSum(YearMonth.of(start.getYear(), start.getMonthValue()).plusMonths(i), 0.0, 0.0);
+            y.setExpenseSum(yearMonthDoubleMap.getOrDefault(y.getDate(), 0.0));
+            result.add(y);
+        }
 
-        return checkGapsInResultArray(result);
+        return result;
     }
 }
