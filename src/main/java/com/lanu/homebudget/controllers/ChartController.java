@@ -23,7 +23,7 @@ public class ChartController {
     }
 
     @GetMapping("/spentMonthToMonthByCategory")
-    public YearMonthSum getSpentMonthToMonthByCategory(@RequestParam(name = "categoryId")Long categoryId){
+    public List<YearMonthSum> getSpentMonthToMonthByCategory(@RequestParam(name = "categoryId")Long categoryId){
         return chartService.getSumsByCategoryAndMonth(categoryId);
     }
 }

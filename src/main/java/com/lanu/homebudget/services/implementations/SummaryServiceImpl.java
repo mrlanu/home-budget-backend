@@ -23,11 +23,11 @@ import java.util.stream.Collectors;
 @Service
 public class SummaryServiceImpl implements SummaryService {
 
-   @Autowired
-   private TransactionRepository transactionRepository;
+    @Autowired
+    private TransactionRepository transactionRepository;
 
-   @Autowired
-   private AccountService accountService;
+    @Autowired
+    private AccountService accountService;
 
     @Override
     public List<Group> getSummaryByCategory(Long budgetId, Date date, Transaction.TransactionType type) {
@@ -53,30 +53,18 @@ public class SummaryServiceImpl implements SummaryService {
                         .stream()
                         .mapToDouble(GroupSubcategory::getSpent)
                         .sum()
-                )));
+        )));
         return result;
     }
 
     private List<GroupSubcategory> getListOfGroupSubcategories (Map<SubCategory, List<Transaction>> map) {
         List<GroupSubcategory> result = new ArrayList<>();
         map.forEach((k,v) -> result.add(new GroupSubcategory(
-            k.getId(),
-                    k.getName(),
-                    v.stream()
-                            .mapToDouble(Transaction::getAmount)
-                            .sum(),
-                    v.stream()
-                            .map(transaction -> new TransactionView(
-                                    transaction.getId(),
-                                    transaction.getDate(),
-                                    transaction.getType().toString(),
-                                    transaction.getDescription(),
-                                    transaction.getAmount(),
-                                    transaction.getCategory().getName(),
-                                    transaction.getSubCategory().getName(),
-                                    transaction.getAccount().getName(),
-                                    transaction.getAccount().getType()))
-                            .collect(Collectors.toList()))
+                k.getId(),
+                k.getName(),
+                v.stream()
+                        .mapToDouble(Transaction::getAmount)
+                        .sum())
         ));
         return result;
     }
@@ -89,11 +77,11 @@ public class SummaryServiceImpl implements SummaryService {
                 .collect(Collectors.groupingBy(Account::getType));
 
         groupedByType.forEach((key, value) -> result.add(
-            new GroupAccount(
-                    key,
-                    value,
-                    value.stream().mapToDouble(Account::getBalance).sum()
-            )));
+                new GroupAccount(
+                        key,
+                        value,
+                        value.stream().mapToDouble(Account::getBalance).sum()
+                )));
 
         return result;
     }
@@ -113,9 +101,9 @@ public class SummaryServiceImpl implements SummaryService {
 
         Map<Transaction.TransactionType, Double> transactionTypeDoubleMap =
                 transactionList
-                .stream()
-                .collect(Collectors.groupingBy(
-                        Transaction::getType, Collectors.summingDouble(Transaction::getAmount)));
+                        .stream()
+                        .collect(Collectors.groupingBy(
+                                Transaction::getType, Collectors.summingDouble(Transaction::getAmount)));
 
         accountsTotal = accountService.findAccountsByBudgetId(budgetId)
                 .stream()

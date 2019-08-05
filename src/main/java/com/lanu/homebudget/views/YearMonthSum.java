@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class YearMonthSum {
-    private List<YearMonth> date;
-    private List<Double> sum;
+    private YearMonth date;
+    private Double expenseSum;
+    private Double incomeSum;
 }

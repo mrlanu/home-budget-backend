@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService{
 
 
         Category categoryFood = categoryService
-                .createCategory(budget.getId(), new Category(null, "Food", Transaction.TransactionType.EXPENSE, new ArrayList<>(), budget));
+        .createCategory(budget.getId(), new Category(null, "Food", Transaction.TransactionType.EXPENSE, new ArrayList<>(), budget));
         SubCategory subCategoryFoodRestaurant = subCategoryService
                 .createSubCategory(categoryFood.getId(), new SubCategory(
                         null, "Restaurant", null));
