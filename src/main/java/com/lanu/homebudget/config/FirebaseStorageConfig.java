@@ -2,6 +2,9 @@ package com.lanu.homebudget.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
+import com.google.common.collect.Lists;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.StorageClient;
@@ -14,20 +17,18 @@ import java.io.IOException;
 @Configuration
 public class FirebaseStorageConfig {
 
+    // client SDK library
     @Bean
-    public Bucket getBucket(){
+    public Storage getStorage(){
+        GoogleCredentials credentials = null;
         try {
-            FileInputStream serviceAccount =
-                    new FileInputStream("/home/lanu/development/MyProjects/Java-apps/home-budget/key.json");
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .setStorageBucket("home-budget-lanu.appspot.com")
-                    .build();
-            FirebaseApp.initializeApp(options);
+            credentials = GoogleCredentials
+                    .fromStream(new FileInputStream("/home/lanu/development/MyProjects/Java-apps/home-budget/images-service-key.json"))
+                    .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return StorageClient.getInstance().bucket();
+        return StorageOptions.newBuilder()
+                .setCredentials(credentials).build().getService();
     }
 }

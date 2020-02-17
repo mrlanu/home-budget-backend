@@ -1,6 +1,8 @@
 package com.lanu.homebudget.services;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public interface FirebaseStorageService {
-    String saveImage();
-    String saveImageClient();
+    void uploadUserProfileImage(String username, MultipartFile file);
+    String downloadUserProfileImage(String username);
 }
