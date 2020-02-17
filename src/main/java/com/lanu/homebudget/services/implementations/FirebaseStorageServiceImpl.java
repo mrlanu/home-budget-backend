@@ -1,13 +1,15 @@
 package com.lanu.homebudget.services.implementations;
 
-import com.google.cloud.storage.*;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
 import com.lanu.homebudget.services.FirebaseStorageService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Base64;
 
 import static org.apache.http.entity.ContentType.*;
 
@@ -38,9 +40,9 @@ public class FirebaseStorageServiceImpl implements FirebaseStorageService {
     }
 
     @Override
-    public String downloadUserProfileImage(String username) {
+    public byte[] downloadUserProfileImage(String username) {
         BlobId blobId = BlobId.of("home-budget-lanu.appspot.com", username);
-        return Base64.getEncoder().encodeToString(storage.get(blobId).getContent());
+        return storage.get(blobId).getContent();
     }
 
     private void isImage(MultipartFile file) {
