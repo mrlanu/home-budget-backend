@@ -46,6 +46,8 @@ public class UserServiceImpl implements UserService{
         // user.setRoles(Arrays.asList(new Role((long) 1, "USER")));
         user.setActive(true);
         user.addBudget(budget);
+        UserDetails userDetails = new UserDetails();
+        user.setUserDetails(userDetails);
         User theUser = userRepository.save(user);
 
         createInitCategoriesAndAccounts(budget);

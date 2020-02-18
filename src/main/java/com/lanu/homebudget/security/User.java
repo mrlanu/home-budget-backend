@@ -3,6 +3,7 @@ package com.lanu.homebudget.security;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lanu.homebudget.entities.Budget;
+import com.lanu.homebudget.entities.UserDetails;
 import lombok.*;
 
 import javax.persistence.*;
@@ -29,6 +30,10 @@ public class User{
 
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
+
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL)
+    private UserDetails userDetails;
 
     @JsonIgnore
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH})
