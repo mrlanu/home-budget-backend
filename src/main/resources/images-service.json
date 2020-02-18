@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "home-budget-lanu",
+  "private_key_id": "22a1e2f73234fc3e35cf1c6fa339810368ecb850",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCfqq0+p6Up4R6L\nnJznU55Fu+qFQlAbeQa/7iFk9+n45zpW4HV3NTP1UWlnAYfEN2gVq0NvdOaaNPeE\nkwu/TLWvyXUtSm7XVVGXzAd7b1SRuIz8c25ewyZynHUAuHAUVKKoMijHaUMWj5KE\nxHYIORKGSH3/6Ud3UPnWnWftxNRS8UTboavjgoRk0CbWu3HlpSNKc6jOWUQ/mhw5\nVEVB0pE+wUjnclaQI+WKGOFfTjQYZwjRh/JCE88YdoFMhtOgQdeC+SZHv5BbmRNZ\nfVmpJil1lsjmLv3oiACYUfrkOzCbOp2U1esGC+L8ENtt5wk60RuO40Kogl0tCKfn\nef6VGfuzAgMBAAECggEAKNwxTLTzWAXT3s+b+bkU6myeJi8jt/wfZZOnuSKWnkty\nSxRTC0gyvUdxzVn/aA/z04PKFKZac0E1zJgi6/hSEKPiGE6Rkgq0AEBG8+g4QLh1\nYA+cQaT4XGE8sgwBJrrIC3oWpH2EHSxtxwtN12nfmzzG/ewxjU/MOAd9NsRlv7m1\n517LbxtRL7oAEVzj08IrM9H2QeCU10NibsR+NbKwpq4E8B67p6r4HHg4y5NAIVTQ\nF4QVDwzw6FSoj+/lsqrMHb8R8m0H9UUf1+/w00ne1u3UzXdvQkG/NQdaRYQSUpiA\n51cqnQEJQBU2/B7vcfJJcMcMDCD6sr1X8ICG/w+gqQKBgQDaaoPmuRK7uDhIj0xS\nlgH9qqNOEw9rI6PuH24W87+6mRIeE6ezFBGsALQNz0p7X+AilAz1WJBIQkY7qkzE\ncdw90yNVd4DxcjZNRXq+r6/FrisKxbVPxkYduMAQrO/Jxh0+DUHkSHQ5DmvEd4r8\n05lvdZIyvIONg0YiUHl93GXMOQKBgQC7JC7I7gp1AQP4kscb0izMWGoAJGvxyyCz\n23CmBHzHzhH2L/PyR2StM1SU3Hap9ZN+S4VISKGezAeEz1Uey5nMgfTaH+KDEMfr\nON5NuEwo9GLPSWMGZw1VNi9AZA7/NdhlLAn8taUvDSZ5T4xbo+8fznwxeiAmfyJw\nIYvLXG5fSwKBgGcSIuKrbcK2YaEkNoE2lwPtFZmPdxQ5Qm/p1xrvtgfJmnolDlt8\n2gYQYuetbdmg2fWXZjIVtCjVVa1sZUPC84sdayw289t86VE3u3/nCoy/70HrIO/f\nglEeUUzNP285la0ltnWTF32hZ4vUWfuLo3mswuw8d9w9Gcixr1OMwWFJAoGALQut\nk0HxFG7VJN03vhOeIuXZRgV+UipByek1OVD1NCb/HdI3FwdmTWaAooBas9hf01Oc\nVmTdOlsEKEy7wXjioV5asLJiFIhShuUeZXjKJEWHDzwr8NuXUv6C6y3qijXMy7WJ\nBeI3S5cPvr2OHHTeVzqdnE84M+wAPxtkCeRK0PcCgYEAyEtjZIrL8DjwjYMpr3a1\nP1/2BSvNSdw604PMKpPJiEMiEVXSRZswbWGlqgNXlsyx0NCBToeFEDyvdl1lJl/o\nzSSHAANbzxRyoMXpYRG8HxROPSNdwQjonslu/joNUjba+hs7UKPGFaDSsw10egrB\nIvYfxpmzcOVDFnICOKNc/Lo=\n-----END PRIVATE KEY-----\n",
+  "client_email": "images-service@home-budget-lanu.iam.gserviceaccount.com",
+  "client_id": "106742745220896543383",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/images-service%40home-budget-lanu.iam.gserviceaccount.com"
+}
