@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  mysql-docker-container:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=root123
+      - MYSQL_DATABASE=homebudget_db
+      - MYSQL_USER=mrlanu
+      - MYSQL_PASSWORD=12345
+    ports:
+    - 3306:3306
+    volumes:
+      - /data/mysql
