@@ -17,7 +17,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .disable()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/","/signup", "/**/image/download").permitAll()
+                .antMatchers("/","/signup","/test").permitAll()
                 .antMatchers("/**").authenticated();
     }
 }

@@ -31,8 +31,8 @@ public class HomeController {
         firebaseStorageService.uploadUserProfileImage(principal.getName(), file);
     }
 
-    @GetMapping("/{username}/image/download")
-    public byte[] downloadUserProfileImage(@PathVariable("username") String username) {
-        return firebaseStorageService.downloadUserProfileImage(username);
+    @GetMapping("/image/download")
+    public String downloadUserProfileImage(Principal principal) {
+        return firebaseStorageService.downloadUserProfileImage(principal.getName());
     }
 }
