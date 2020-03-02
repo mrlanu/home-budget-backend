@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -14,10 +13,10 @@ import java.util.List;
 public class Debt {
     private String publicId;
     private String name;
-    private BigDecimal startBalance;
-    private BigDecimal currentBalance;
+    private double startBalance;
+    private double currentBalance;
     private double apr;
-    private  int minimumPayment;
+    private  double minimumPayment;
     private LocalDate nextPaymentDue;
     private List<Payment> paymentsList;
 }

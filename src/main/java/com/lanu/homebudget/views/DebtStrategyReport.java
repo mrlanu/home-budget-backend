@@ -10,10 +10,10 @@ import java.util.List;
 @NoArgsConstructor
 public class DebtStrategyReport {
     private int duration;
-    private List<String> extraPayments;
-    private List<String> minPayments;
+    private List<DebtReportItem> extraPayments;
+    private List<DebtReportItem> minPayments;
 
-    public void addExtraPayment(String extra){
+    public void addExtraPayment(DebtReportItem extra){
         if (extraPayments == null){
             extraPayments = new ArrayList<>();
         }
@@ -22,12 +22,13 @@ public class DebtStrategyReport {
         }
     }
 
-    public void addMinPayment(String min){
+    public void addMinPayment(DebtReportItem min){
         if (minPayments == null){
             minPayments = new ArrayList<>();
         }
-        if (!minPayments.contains(min)){
+        if (!minPayments.contains(min) && !extraPayments.contains(min)){
             minPayments.add(min);
         }
     }
+
 }

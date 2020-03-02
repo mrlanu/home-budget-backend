@@ -1,10 +1,10 @@
 package com.lanu.homebudget.services.implementations;
 
 import com.lanu.homebudget.entities.Debt;
+import com.lanu.homebudget.views.DebtReportItem;
 import com.lanu.homebudget.views.DebtStrategyReport;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,44 +14,42 @@ import java.util.stream.Collectors;
 
 @Service
 public class DebtPayoffServiceImpl {
-    private static int extraPayment = 100;
+
     private static List<Debt> debtsList = Arrays.asList(
-            new Debt("test1", "City VISA", BigDecimal.valueOf(300), BigDecimal.valueOf(1000),
+            new Debt("test1", "City VISA", 300, 700,
                     15, 25, LocalDate.now().plusMonths(1), new ArrayList<>()),
-            new Debt("test2", "CHASE VISA", BigDecimal.valueOf(700), BigDecimal.valueOf(2000),
-                    14, 25, LocalDate.now().plusMonths(1), new ArrayList<>())/*,
-            new Debt("test3", "Car loan", BigDecimal.valueOf(10000), BigDecimal.valueOf(1000),
+            new Debt("test2", "CHASE VISA", 700, 550,
+                    14, 25, LocalDate.now().plusMonths(1), new ArrayList<>()),
+            new Debt("test3", "Car loan", 10000, 800,
                     2.5, 25, LocalDate.now().plusMonths(1), new ArrayList<>()),
-            new Debt("test4", "Bank of America VISA", BigDecimal.valueOf(3000), BigDecimal.valueOf(500),
-                    13, 25, LocalDate.now().plusMonths(1), new ArrayList<>())*/
+            new Debt("test4", "Bank of America VISA", 3000, 700,
+                    13, 25, LocalDate.now().plusMonths(1), new ArrayList<>())
     );
 
     public static void main(String[] args) {
-        List<Debt> debts = sortDebts(debtsList, "apr");
-        //debts.forEach(System.out::println);
-        //System.out.println(isCompletedDebt(debts));
-        testMethod(debts);
+        List<Debt> debts = sortDebts(debtsList, "avalanche");
+        countDebtsPayOffStrategy(debts, 100);
     }
 
     private static List<Debt> sortDebts(List<Debt> debtsList, String strategy){
         return strategy.equals("apr") ?
                 debtsList.stream()
-                .sorted((debt1, debt2) -> {
-                    if (debt1.getApr() > debt2.getApr()) return -1;
-                    if (debt1.getApr() < debt2.getApr()) return 1;
-                    if (debt1.getApr() == debt2.getApr()) {
-                        if (debt1.getCurrentBalance().compareTo(debt2.getCurrentBalance()) > 0) {
-                            return 1;
-                        } else return -1;
-                    }
-                    return 0;
-                })
-                .collect(Collectors.toList()) :
+                        .sorted((debt1, debt2) -> {
+                            if (debt1.getApr() > debt2.getApr()) return -1;
+                            if (debt1.getApr() < debt2.getApr()) return 1;
+                            if (debt1.getApr() == debt2.getApr()) {
+                                if (debt1.getCurrentBalance() > debt2.getCurrentBalance()) {
+                                    return 1;
+                                } else return -1;
+                            }
+                            return 0;
+                        })
+                        .collect(Collectors.toList()) :
                 debtsList.stream()
                         .sorted((debt1, debt2) -> {
-                            if (debt1.getCurrentBalance().compareTo(debt2.getCurrentBalance()) > 0) return 1;
-                            if (debt1.getCurrentBalance().compareTo(debt2.getCurrentBalance()) < 0) return -1;
-                            if (debt1.getCurrentBalance().compareTo(debt2.getCurrentBalance()) == 0) {
+                            if (debt1.getCurrentBalance() > debt2.getCurrentBalance()) return 1;
+                            if (debt1.getCurrentBalance() < debt2.getCurrentBalance()) return -1;
+                            if (debt1.getCurrentBalance() == debt2.getCurrentBalance()) {
                                 if (debt1.getApr() > debt2.getApr()) {
                                     return -1;
                                 } else return 1;
@@ -61,52 +59,43 @@ public class DebtPayoffServiceImpl {
                         .collect(Collectors.toList());
     }
 
-    private static boolean isCompletedDebt(List<Debt> debtsList){
-        int allExtra = extraPayment + debtsList
+    private static boolean isCompletedDebt(List<Debt> debtsList, double extraPayment){
+        double allExtra = extraPayment + debtsList
                 .stream()
-                .filter(debt -> debt.getCurrentBalance().compareTo(BigDecimal.ZERO) == 0)
-                .mapToInt(Debt::getMinimumPayment)
+                .filter(debt -> debt.getCurrentBalance() == 0)
+                .mapToDouble(Debt::getMinimumPayment)
                 .sum();
 
         Debt debtForExtra = debtsList.stream()
-                .filter(d -> d.getCurrentBalance().doubleValue() > 0)
+                .filter(d -> d.getCurrentBalance() > 0)
                 .findFirst()
                 .orElseThrow(InvalidParameterException::new);
 
-        if (debtForExtra.getCurrentBalance()
-                .compareTo(BigDecimal.valueOf(allExtra).add(BigDecimal.valueOf(debtForExtra.getMinimumPayment()))) <= 0){
+        if (debtForExtra.getCurrentBalance() <= allExtra + debtForExtra.getMinimumPayment()){
             return true;
         }
 
-        for (int i = 0; i < debtsList.size(); i++) {
-            Debt debt = debtsList.get(i);
-
-            if (debt.getCurrentBalance().compareTo(BigDecimal.ZERO) > 0 &&
-                    debt.getCurrentBalance().compareTo(BigDecimal.valueOf(debt.getMinimumPayment())) <= 0){
+        for (Debt debt : debtsList) {
+            if (debt.getCurrentBalance() > 0 &&
+                    debt.getCurrentBalance() <= debt.getMinimumPayment()) {
                 return true;
             }
         }
         return false;
     }
 
-    private static Debt makeMinPayment(Debt debt){
-        debt.setCurrentBalance(debt.getCurrentBalance().subtract(BigDecimal.valueOf(debt.getMinimumPayment())));
-        return debt;
-    }
-
-    private static void testMethod(List<Debt> debts) {
+    private static void countDebtsPayOffStrategy(List<Debt> debts, double extra) {
 
         int duration = 0;
         List<DebtStrategyReport> debtStrategyReports = new ArrayList<>();
         DebtStrategyReport report = new DebtStrategyReport();
 
-        debts.forEach(System.out::println);
-        System.out.println("/n");
-
         // 1. check if there is any balance to pay
-        while (debts.stream().mapToDouble(debt -> debt.getCurrentBalance().doubleValue()).sum() > 0) {
-            BigDecimal extraPaym = BigDecimal.valueOf(extraPayment);
-            boolean isFullPayedDebt = isCompletedDebt(debts);
+        while (debts.stream().mapToDouble(Debt::getCurrentBalance).sum() > 0) {
+
+            double extraPayment = extra;
+            boolean isFullPayedDebt = isCompletedDebt(debts, extraPayment);
+            double tempCurrentBalance;
 
             // check whether is there full payed balance or not
             if (isFullPayedDebt){
@@ -114,9 +103,11 @@ public class DebtPayoffServiceImpl {
                     report.setDuration(duration);
                     // add all minPayments to the report except first one (which is extra payment)
                     for (int i = 1; i < debts.size(); i++) {
-                        report.addMinPayment(debts.get(i).getName());
+                        Debt d = debts.get(i);
+                        if (d.getCurrentBalance() > 0) {
+                            report.addMinPayment(new DebtReportItem(d.getName(), d.getMinimumPayment()));
+                        }
                     }
-
                     debtStrategyReports.add(report);
                 }
 
@@ -126,54 +117,56 @@ public class DebtPayoffServiceImpl {
             }
 
             // 2. make minimum payment to all debts
-            for (int i = 0; i < debts.size(); i++){
-                Debt debt = debts.get(i);
-
-                // if there in the list exist any paid debt then add its minimum payment to extraPaym
-                if (debt.getCurrentBalance().doubleValue() <= 0){
-                    extraPaym = extraPaym.add(BigDecimal.valueOf(debt.getMinimumPayment()));
+            for (Debt debt : debts) {
+                // if there in the list exist any paid debt then add its minimum payment to extraPayment
+                if (debt.getCurrentBalance() <= 0) {
+                    extraPayment += debt.getMinimumPayment();
                     continue;
                 }
 
-                debt.setCurrentBalance(debt.getCurrentBalance().subtract(BigDecimal.valueOf(debt.getMinimumPayment())));
+                // added temporary variable in case if there going to be payed balance
+                tempCurrentBalance = debt.getCurrentBalance();
+                debt.setCurrentBalance(debt.getCurrentBalance() - debt.getMinimumPayment());
 
                 // check if the balance is paid
-                if (debt.getCurrentBalance().doubleValue() <= 0) {
-
+                if (debt.getCurrentBalance() <= 0) {
                     // if yes, add leftover to extraPayment
-                    extraPaym = debt.getCurrentBalance().multiply(BigDecimal.valueOf(-1)).add(extraPaym);
-                    debt.setCurrentBalance(BigDecimal.ZERO);
+                    report.addExtraPayment(new DebtReportItem(debt.getName(), tempCurrentBalance));
+                    extraPayment = -debt.getCurrentBalance() + extraPayment;
+                    debt.setCurrentBalance(0);
                 }
             }
 
             // 3. make extra payment
-            while (extraPaym.doubleValue() > 0) {
-
+            while (extraPayment > 0) {
                 // find first debt with currentBalance > 0
                 Debt debt = debts.stream()
-                        .filter(d -> d.getCurrentBalance().doubleValue() > 0)
+                        .filter(d -> d.getCurrentBalance() > 0)
                         .findFirst()
                         .orElseGet(Debt::new);
-
+                // for the last debt in the list of Debts
                 if (debt.getMinimumPayment() == 0)break;
 
-                debt.setCurrentBalance(debt.getCurrentBalance().subtract(extraPaym));
-                extraPaym = BigDecimal.ZERO;
-                report.addExtraPayment(debt.getName());
+                tempCurrentBalance = debt.getCurrentBalance();
+                debt.setCurrentBalance(debt.getCurrentBalance() - extraPayment);
 
                 // check if the balance is paid
-                if (debt.getCurrentBalance().doubleValue() <= 0) {
-
+                if (debt.getCurrentBalance() <= 0) {
+                    report.addExtraPayment(new DebtReportItem(debt.getName(), tempCurrentBalance + debt.getMinimumPayment()));
+                    extraPayment = 0;
                     // if yes, add leftover to extraPayment
-                    extraPaym = debt.getCurrentBalance().multiply(BigDecimal.valueOf(-1)).add(extraPaym);
-                    debt.setCurrentBalance(BigDecimal.ZERO);
+                    extraPayment = -debt.getCurrentBalance() + extraPayment;
+                    debt.setCurrentBalance(0);
+                    continue;
                 }
+                report.addExtraPayment(new DebtReportItem(debt.getName(), debt.getMinimumPayment() + extraPayment));
+                extraPayment = 0;
             }
 
             if (isFullPayedDebt){
                 for (Debt d: debts) {
-                    if (d.getCurrentBalance().compareTo(BigDecimal.ZERO) > 0){
-                        report.addMinPayment(d.getName());
+                    if (d.getCurrentBalance() > 0){
+                        report.addMinPayment(new DebtReportItem(d.getName(), d.getMinimumPayment()));
                     }
                 }
                 debtStrategyReports.add(report);
@@ -181,11 +174,9 @@ public class DebtPayoffServiceImpl {
                 duration = 0;
             }
             else duration++;
-
-            debts.forEach(System.out::println);
-            System.out.println("\n");
+            /*debts.forEach(System.out::println);
+            System.out.println("\n");*/
         }
-
         debtStrategyReports.forEach(System.out::println);
     }
 }
