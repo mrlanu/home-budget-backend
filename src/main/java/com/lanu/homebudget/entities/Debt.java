@@ -17,7 +17,7 @@ public class Debt {
     private BigDecimal startBalance;
     private BigDecimal currentBalance;
     private double apr;
-    private  double minimumPayment;
+    private  int minimumPayment;
     private LocalDate nextPaymentDue;
     private List<Payment> paymentsList;
 }
