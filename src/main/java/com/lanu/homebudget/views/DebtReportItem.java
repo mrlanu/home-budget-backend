@@ -12,6 +12,7 @@ import java.util.Objects;
 public class DebtReportItem{
     private String name;
     private double amount;
+    private boolean paid;
 
     @Override
     public boolean equals(Object o) {
