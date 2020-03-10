@@ -48,7 +48,7 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
                     for (int i = 1; i < sortDebts.size(); i++) {
                         Debt d = sortDebts.get(i);
                         if (d.getCurrentBalance() > 0) {
-                            report.addMinPayment(new DebtReportItem(d.getName(), d.getMinimumPayment()));
+                            report.addMinPayment(new DebtReportItem(d.getName(), d.getMinimumPayment(), false));
                         }
                     }
                     debtStrategyReports.add(report);
@@ -74,7 +74,7 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
                 // check if the balance is paid
                 if (debt.getCurrentBalance() <= 0) {
                     // if yes, add leftover to extraPayment
-                    report.addExtraPayment(new DebtReportItem(debt.getName(), tempCurrentBalance));
+                    report.addExtraPayment(new DebtReportItem(debt.getName(), tempCurrentBalance, true));
                     extraPayment = -debt.getCurrentBalance() + extraPayment;
                     debt.setCurrentBalance(0);
                 }
@@ -95,21 +95,21 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
 
                 // check if the balance is paid
                 if (debt.getCurrentBalance() <= 0) {
-                    report.addExtraPayment(new DebtReportItem(debt.getName(), tempCurrentBalance + debt.getMinimumPayment()));
+                    report.addExtraPayment(new DebtReportItem(debt.getName(), tempCurrentBalance + debt.getMinimumPayment(), true));
                     extraPayment = 0;
                     // if yes, add leftover to extraPayment
                     extraPayment = -debt.getCurrentBalance() + extraPayment;
                     debt.setCurrentBalance(0);
                     continue;
                 }
-                report.addExtraPayment(new DebtReportItem(debt.getName(), debt.getMinimumPayment() + extraPayment));
+                report.addExtraPayment(new DebtReportItem(debt.getName(), debt.getMinimumPayment() + extraPayment, false));
                 extraPayment = 0;
             }
 
             if (isFullPayedDebt){
                 for (Debt d: sortDebts) {
                     if (d.getCurrentBalance() > 0){
-                        report.addMinPayment(new DebtReportItem(d.getName(), d.getMinimumPayment()));
+                        report.addMinPayment(new DebtReportItem(d.getName(), d.getMinimumPayment(), false));
                     }
                 }
                 debtStrategyReports.add(report);
