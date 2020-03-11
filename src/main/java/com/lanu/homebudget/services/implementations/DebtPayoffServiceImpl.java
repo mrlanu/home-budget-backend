@@ -36,7 +36,7 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
     }
 
     @Override
-    public List<DebtStrategyReport> countDebtsPayOffStrategy(Long budgetId, double extraPayment) {
+    public List<DebtStrategyReport> countDebtsPayOffStrategy(Long budgetId, double extra) {
 
         int duration = 0;
         List<DebtStrategyReport> debtStrategyReports = new ArrayList<>();
@@ -47,6 +47,7 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
         // 1. check if there is any balance to pay
         while (sortDebts.stream().mapToDouble(Debt::getCurrentBalance).sum() > 0) {
 
+            double extraPayment = extra;
             boolean isFullPayedDebt = isCompletedDebt(sortDebts, extraPayment);
             double tempCurrentBalance;
 
