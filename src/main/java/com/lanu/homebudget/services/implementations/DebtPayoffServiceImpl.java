@@ -36,13 +36,13 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
     }
 
     @Override
-    public List<DebtStrategyReport> countDebtsPayOffStrategy(Long budgetId, double extra) {
+    public List<DebtStrategyReport> countDebtsPayOffStrategy(Long budgetId, double extra, String strategy) {
 
         int duration = 0;
         List<DebtStrategyReport> debtStrategyReports = new ArrayList<>();
         DebtStrategyReport report = new DebtStrategyReport();
         List<Debt> debts = debtRepository.findAllByBudget_Id(budgetId);
-        List<Debt> sortDebts = sortDebts(debts, "avalanche");
+        List<Debt> sortDebts = sortDebts(debts, strategy);
 
         // 1. check if there is any balance to pay
         while (sortDebts.stream().mapToDouble(Debt::getCurrentBalance).sum() > 0) {
@@ -135,7 +135,7 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
     }
 
     private static List<Debt> sortDebts(List<Debt> debtsList, String strategy){
-        return strategy.equals("apr") ?
+        return strategy.equals("Avalanche") ?
                 debtsList.stream()
                         .sorted((debt1, debt2) -> {
                             if (debt1.getApr() > debt2.getApr()) return -1;

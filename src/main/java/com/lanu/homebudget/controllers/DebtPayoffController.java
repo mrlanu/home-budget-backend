@@ -32,7 +32,8 @@ public class DebtPayoffController {
 
     @GetMapping("/payoff")
     public List<DebtStrategyReport> getReport(@RequestParam(name = "budgetId") Long budgetId,
-                                              @RequestParam(name = "extraPayment") double extra){
-        return debtPayoffService.countDebtsPayOffStrategy(budgetId, extra);
+                                              @RequestParam(name = "extraPayment") double extra,
+                                              @RequestParam(name = "strategy") String strategy){
+        return debtPayoffService.countDebtsPayOffStrategy(budgetId, extra, strategy);
     }
 }
