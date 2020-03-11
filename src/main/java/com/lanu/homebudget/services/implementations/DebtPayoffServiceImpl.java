@@ -1,6 +1,8 @@
 package com.lanu.homebudget.services.implementations;
 
 import com.lanu.homebudget.entities.Debt;
+import com.lanu.homebudget.repositories.BudgetRepository;
+import com.lanu.homebudget.repositories.DebtRepository;
 import com.lanu.homebudget.services.DebtPayoffService;
 import com.lanu.homebudget.views.DebtReportItem;
 import com.lanu.homebudget.views.DebtStrategyReport;
@@ -14,23 +16,32 @@ import java.util.stream.Collectors;
 @Service
 public class DebtPayoffServiceImpl implements DebtPayoffService {
 
-    /*private static List<Debt> debtsList = Arrays.asList(
-            new Debt("test1", "City VISA", 300, 700,
-                    15, 25, LocalDate.now().plusMonths(1), new ArrayList<>()),
-            new Debt("test2", "CHASE VISA", 700, 550,
-                    14, 25, LocalDate.now().plusMonths(1), new ArrayList<>()),
-            new Debt("test3", "Car loan", 10000, 800,
-                    2.5, 25, LocalDate.now().plusMonths(1), new ArrayList<>()),
-            new Debt("test4", "Bank of America VISA", 3000, 700,
-                    13, 25, LocalDate.now().plusMonths(1), new ArrayList<>())
-    );*/
+    private DebtRepository debtRepository;
+    private BudgetRepository budgetRepository;
+
+    public DebtPayoffServiceImpl(DebtRepository debtRepository, BudgetRepository budgetRepository) {
+        this.debtRepository = debtRepository;
+        this.budgetRepository = budgetRepository;
+    }
 
     @Override
-    public List<DebtStrategyReport> countDebtsPayOffStrategy(List<Debt> debts, double extra) {
+    public Debt createDebt(Long budgetId, Debt debt){
+        debt.setBudget(budgetRepository.findById(budgetId).get());
+        return debtRepository.save(debt);
+    }
+
+    @Override
+    public List<Debt> getAllDebtsByBudgetId(Long budgetId){
+        return debtRepository.findAllByBudget_Id(budgetId);
+    }
+
+    @Override
+    public List<DebtStrategyReport> countDebtsPayOffStrategy(Long budgetId, double extra) {
 
         int duration = 0;
         List<DebtStrategyReport> debtStrategyReports = new ArrayList<>();
         DebtStrategyReport report = new DebtStrategyReport();
+        List<Debt> debts = debtRepository.findAllByBudget_Id(budgetId);
         List<Debt> sortDebts = sortDebts(debts, "avalanche");
 
         // 1. check if there is any balance to pay

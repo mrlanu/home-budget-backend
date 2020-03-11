@@ -6,5 +6,7 @@ import com.lanu.homebudget.views.DebtStrategyReport;
 import java.util.List;
 
 public interface DebtPayoffService {
-    List<DebtStrategyReport> countDebtsPayOffStrategy(List<Debt> debts, double extra);
+    Debt createDebt(Long budgetId, Debt debt);
+    List<Debt> getAllDebtsByBudgetId(Long budgetId);
+    List<DebtStrategyReport> countDebtsPayOffStrategy(Long budgetId, double extra);
 }
