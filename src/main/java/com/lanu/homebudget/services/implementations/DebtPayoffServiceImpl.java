@@ -36,7 +36,7 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
     }
 
     @Override
-    public List<DebtStrategyReport> countDebtsPayOffStrategy(Long budgetId, double extra) {
+    public List<DebtStrategyReport> countDebtsPayOffStrategy(Long budgetId, double extraPayment) {
 
         int duration = 0;
         List<DebtStrategyReport> debtStrategyReports = new ArrayList<>();
@@ -47,7 +47,6 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
         // 1. check if there is any balance to pay
         while (sortDebts.stream().mapToDouble(Debt::getCurrentBalance).sum() > 0) {
 
-            double extraPayment = extra;
             boolean isFullPayedDebt = isCompletedDebt(sortDebts, extraPayment);
             double tempCurrentBalance;
 
@@ -92,7 +91,7 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
             }
 
             // 3. make extra payment
-            while (extraPayment > 0) {
+            do {
                 // find first debt with currentBalance > 0
                 Debt debt = sortDebts.stream()
                         .filter(d -> d.getCurrentBalance() > 0)
@@ -115,7 +114,7 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
                 }
                 report.addExtraPayment(new DebtReportItem(debt.getName(), debt.getMinimumPayment() + extraPayment, false));
                 extraPayment = 0;
-            }
+            } while (extraPayment > 0);
 
             if (isFullPayedDebt){
                 for (Debt d: sortDebts) {
