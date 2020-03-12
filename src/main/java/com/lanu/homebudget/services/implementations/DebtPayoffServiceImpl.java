@@ -33,6 +33,20 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
     }
 
     @Override
+    public Debt editDebt(Debt debt) {
+        return debtRepository.findById(debt.getId()).map(d -> {
+            d.setCurrentBalance(debt.getCurrentBalance());
+            d.setApr(debt.getApr());
+            d.setMinimumPayment(debt.getMinimumPayment());
+            d.setName(debt.getName());
+            d.setNextPaymentDue(debt.getNextPaymentDue());
+            d.setStartBalance(debt.getStartBalance());
+            d.setPaymentsList(debt.getPaymentsList());
+            return debtRepository.save(d);
+        }).orElseThrow(() -> new ResourceNotFoundException("DebtId " + debt.getId() + "not found"));
+    }
+
+    @Override
     public List<Debt> getAllDebtsByBudgetId(Long budgetId){
         return debtRepository.findAllByBudget_Id(budgetId);
     }

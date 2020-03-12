@@ -1,5 +1,6 @@
 package com.lanu.homebudget.controllers;
 
+import com.lanu.homebudget.entities.Account;
 import com.lanu.homebudget.entities.Debt;
 import com.lanu.homebudget.services.DebtPayoffService;
 import com.lanu.homebudget.views.DebtStrategyReport;
@@ -36,6 +37,11 @@ public class DebtPayoffController {
                                               @RequestParam(name = "extraPayment") double extra,
                                               @RequestParam(name = "strategy") String strategy){
         return debtPayoffService.countDebtsPayOffStrategy(budgetId, extra, strategy);
+    }
+
+    @PutMapping
+    public Debt updateDebt(@Valid @RequestBody Debt debt) {
+        return debtPayoffService.editDebt(debt);
     }
 
     @DeleteMapping
