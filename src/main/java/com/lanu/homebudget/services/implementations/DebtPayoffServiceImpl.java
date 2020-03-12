@@ -1,11 +1,13 @@
 package com.lanu.homebudget.services.implementations;
 
 import com.lanu.homebudget.entities.Debt;
+import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.repositories.BudgetRepository;
 import com.lanu.homebudget.repositories.DebtRepository;
 import com.lanu.homebudget.services.DebtPayoffService;
 import com.lanu.homebudget.views.DebtReportItem;
 import com.lanu.homebudget.views.DebtStrategyReport;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
@@ -31,8 +33,30 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
     }
 
     @Override
+    public Debt editDebt(Debt debt) {
+        return debtRepository.findById(debt.getId()).map(d -> {
+            d.setCurrentBalance(debt.getCurrentBalance());
+            d.setApr(debt.getApr());
+            d.setMinimumPayment(debt.getMinimumPayment());
+            d.setName(debt.getName());
+            d.setNextPaymentDue(debt.getNextPaymentDue());
+            d.setStartBalance(debt.getStartBalance());
+            d.setPaymentsList(debt.getPaymentsList());
+            return debtRepository.save(d);
+        }).orElseThrow(() -> new ResourceNotFoundException("DebtId " + debt.getId() + "not found"));
+    }
+
+    @Override
     public List<Debt> getAllDebtsByBudgetId(Long budgetId){
         return debtRepository.findAllByBudget_Id(budgetId);
+    }
+
+    @Override
+    public ResponseEntity<?> deleteDebt(Long debtId) {
+        return debtRepository.findById(debtId).map(debt -> {
+            debtRepository.delete(debt);
+            return ResponseEntity.ok().build();
+        }).orElseThrow(() -> new ResourceNotFoundException("DebtId " + debtId + " not found"));
     }
 
     @Override
