@@ -3,6 +3,7 @@ package com.lanu.homebudget.controllers;
 import com.lanu.homebudget.entities.Debt;
 import com.lanu.homebudget.services.DebtPayoffService;
 import com.lanu.homebudget.views.DebtStrategyReport;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -35,5 +36,10 @@ public class DebtPayoffController {
                                               @RequestParam(name = "extraPayment") double extra,
                                               @RequestParam(name = "strategy") String strategy){
         return debtPayoffService.countDebtsPayOffStrategy(budgetId, extra, strategy);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteDebt(@RequestParam(value = "debtId") Long debtId) {
+        return debtPayoffService.deleteDebt(debtId);
     }
 }

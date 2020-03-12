@@ -1,11 +1,13 @@
 package com.lanu.homebudget.services.implementations;
 
 import com.lanu.homebudget.entities.Debt;
+import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.repositories.BudgetRepository;
 import com.lanu.homebudget.repositories.DebtRepository;
 import com.lanu.homebudget.services.DebtPayoffService;
 import com.lanu.homebudget.views.DebtReportItem;
 import com.lanu.homebudget.views.DebtStrategyReport;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
@@ -33,6 +35,14 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
     @Override
     public List<Debt> getAllDebtsByBudgetId(Long budgetId){
         return debtRepository.findAllByBudget_Id(budgetId);
+    }
+
+    @Override
+    public ResponseEntity<?> deleteDebt(Long debtId) {
+        return debtRepository.findById(debtId).map(debt -> {
+            debtRepository.delete(debt);
+            return ResponseEntity.ok().build();
+        }).orElseThrow(() -> new ResourceNotFoundException("DebtId " + debtId + " not found"));
     }
 
     @Override
