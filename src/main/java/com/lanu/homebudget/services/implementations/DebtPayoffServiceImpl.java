@@ -5,12 +5,16 @@ import com.lanu.homebudget.exceptions.ResourceNotFoundException;
 import com.lanu.homebudget.repositories.BudgetRepository;
 import com.lanu.homebudget.repositories.DebtRepository;
 import com.lanu.homebudget.services.DebtPayoffService;
+import com.lanu.homebudget.views.DebtPayoffStrategy;
 import com.lanu.homebudget.views.DebtReportItem;
 import com.lanu.homebudget.views.DebtStrategyReport;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.InvalidParameterException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,9 +64,10 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
     }
 
     @Override
-    public List<DebtStrategyReport> countDebtsPayOffStrategy(Long budgetId, double extra, String strategy) {
+    public DebtPayoffStrategy countDebtsPayOffStrategy(Long budgetId, double extra, String strategy) {
 
         int duration = 0;
+        BigDecimal totalInterest = BigDecimal.ZERO;
         List<DebtStrategyReport> debtStrategyReports = new ArrayList<>();
         DebtStrategyReport report = new DebtStrategyReport();
         List<Debt> debts = debtRepository.findAllByBudget_Id(budgetId);
@@ -102,9 +107,16 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
                     continue;
                 }
 
+                //count total interest that going to be payed
+                double interest = (debt.getCurrentBalance() * debt.getApr() / 12) / 100;
+                double principal = debt.getMinimumPayment() - interest;
+                totalInterest = totalInterest.add(BigDecimal.valueOf(interest)
+                        .setScale(2, RoundingMode.HALF_UP));
+
                 // added temporary variable in case if there going to be payed balance
                 tempCurrentBalance = debt.getCurrentBalance();
-                debt.setCurrentBalance(debt.getCurrentBalance() - debt.getMinimumPayment());
+
+                debt.setCurrentBalance(debt.getCurrentBalance() - principal);
 
                 // check if the balance is paid
                 if (debt.getCurrentBalance() <= 0) {
@@ -152,10 +164,16 @@ public class DebtPayoffServiceImpl implements DebtPayoffService {
                 duration = 0;
             }
             else duration++;
-            /*debts.forEach(System.out::println);
-            System.out.println("\n");*/
         }
-        return debtStrategyReports;
+
+        return createReport(debtStrategyReports, totalInterest);
+    }
+
+    private DebtPayoffStrategy createReport(List<DebtStrategyReport> debtStrategyReports,
+                                            BigDecimal totalInterest){
+        int totalDuration = debtStrategyReports.stream().mapToInt(DebtStrategyReport::getDuration).sum();
+        return new DebtPayoffStrategy(totalDuration, totalInterest,
+                LocalDate.now().plusMonths(totalDuration),debtStrategyReports);
     }
 
     private static List<Debt> sortDebts(List<Debt> debtsList, String strategy){

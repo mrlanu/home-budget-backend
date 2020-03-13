@@ -1,8 +1,8 @@
 package com.lanu.homebudget.controllers;
 
-import com.lanu.homebudget.entities.Account;
 import com.lanu.homebudget.entities.Debt;
 import com.lanu.homebudget.services.DebtPayoffService;
+import com.lanu.homebudget.views.DebtPayoffStrategy;
 import com.lanu.homebudget.views.DebtStrategyReport;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,9 +33,9 @@ public class DebtPayoffController {
 
 
     @GetMapping("/payoff")
-    public List<DebtStrategyReport> getReport(@RequestParam(name = "budgetId") Long budgetId,
-                                              @RequestParam(name = "extraPayment") double extra,
-                                              @RequestParam(name = "strategy") String strategy){
+    public DebtPayoffStrategy getReport(@RequestParam(name = "budgetId") Long budgetId,
+                                        @RequestParam(name = "extraPayment") double extra,
+                                        @RequestParam(name = "strategy") String strategy){
         return debtPayoffService.countDebtsPayOffStrategy(budgetId, extra, strategy);
     }
 
