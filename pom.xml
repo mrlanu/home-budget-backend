@@ -81,7 +81,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.1.4</version>
+            <version>42.4.1</version>
         </dependency>
 
         <!-- After first launch I got an error on Java 10, solution is those 3 dependencies-->
